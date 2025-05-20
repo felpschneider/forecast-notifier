@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.domain.model;
+package com.meli.notifier.forecast.domain.model.database;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

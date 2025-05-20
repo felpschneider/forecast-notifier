@@ -1,6 +1,9 @@
 package com.meli.notifier.forecast.adapter.persistence.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +12,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "cities")
@@ -30,7 +31,7 @@ public class CityEntity {
     @Column(name = "state_code", nullable = false, length = 2)
     private String stateCode;
 
-    @Column(name = "is_coastal", nullable = false)
+    @Column(name = "is_coastal")
     private Boolean isCoastal;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -41,6 +42,4 @@ public class CityEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<SubscriptionEntity> subscriptions = new HashSet<>();
 }

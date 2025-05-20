@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.domain.model;
+package com.meli.notifier.forecast.domain.model.database;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationChannel {
-    private Long id;
+public class Session {
+    private String id;
     private User user;
-    private Boolean webOptIn;
+    private LocalDateTime expiresAt;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
