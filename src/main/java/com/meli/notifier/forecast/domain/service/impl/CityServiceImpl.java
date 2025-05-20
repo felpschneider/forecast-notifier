@@ -5,7 +5,6 @@ import com.meli.notifier.forecast.adapter.persistence.repository.CityRepository;
 import com.meli.notifier.forecast.domain.mapper.CityMapper;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.service.CityService;
-import com.meli.notifier.forecast.domain.service.CptecService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,19 +18,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
 
-    private final CptecService cptecService;
     private final CityRepository cityRepository;
     private final CityMapper cityMapper;
 
     @Override
     public List<City> findCities(String cityName) {
         log.info("Finding cities with name: {}", cityName);
-        return cptecService.findCities(cityName);
+        return cityRepository.findCityEntitiesByName(cityName).stream().map(cityMapper::toModel).toList();
     }
 
     @Transactional
     @Override
-    public void saveCitiesToDatabase(List<City> cities) {
+    public List<City> saveCitiesToDatabase(List<City> cities) {
         log.info("Saving cities to database: {}", cities.size());
         for (City city : cities) {
             if (cityRepository.findById(city.getIdCptec()).isPresent()) {
@@ -41,6 +39,7 @@ public class CityServiceImpl implements CityService {
 
             saveCity(city);
         }
+        return cities;
     }
 
     @Transactional

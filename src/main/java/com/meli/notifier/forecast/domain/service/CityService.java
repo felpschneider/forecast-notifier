@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface CityService {
     List<City> findCities(String cityName);
 
-    void saveCitiesToDatabase(List<City> cities);
+    List<City> saveCitiesToDatabase(List<City> cities);
 
     void saveCity(City city);
 

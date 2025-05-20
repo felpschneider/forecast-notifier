@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Habilitar broker de mensagem simples para enviar mensagens de retorno para o cliente em destinos prefixados com /topic /queue
+        // Definindo destinos de mensagens de broadcast e filas
         registry.enableSimpleBroker("/topic", "/queue");
         
         // Prefixo para mensagens mapeadas para métodos anotados com @MessageMapping
@@ -24,8 +24,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Registra o endpoint /ws-notifications com suporte para SockJS
-        registry.addEndpoint("/ws-notifications")
+        // Registra o endpoint principal de conexão WebSocket
+        registry.addEndpoint("/notifications")
             .setAllowedOriginPatterns("*") // Em produção, restrinja os domínios permitidos
             .withSockJS();
     }

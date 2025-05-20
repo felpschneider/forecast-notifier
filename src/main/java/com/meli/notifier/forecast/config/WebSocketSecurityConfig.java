@@ -35,37 +35,37 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                
+
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    log.info("Tentativa de conexão WebSocket recebida");
                     String token = extractToken(accessor);
-                    
+
                     if (StringUtils.hasText(token)) {
                         // Valida o token e configura a autenticação
+                        log.debug("Token encontrado, tentando autenticar");
                         setPrincipalIfValid(token, accessor);
-                    } else {
-                        log.warn("Tentativa de conexão WebSocket sem token de autenticação");
                     }
                 }
                 return message;
             }
         });
     }
-    
+
     private String extractToken(StompHeaderAccessor accessor) {
         // O token é enviado como um cabeçalho "Authorization" no formato "Bearer {token}"
         String authorization = accessor.getFirstNativeHeader("Authorization");
-        
+
         if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
             return authorization.substring(7);
         }
-        
+
         return null;
     }
-    
+
     private void setPrincipalIfValid(String token, StompHeaderAccessor accessor) {
         Optional<Long> userIdOpt = sessionRepository.findById(token)
                 .map(session -> session.getUser().getId());
-                
+
         if (userIdOpt.isPresent()) {
             Principal principal = new TokenPrincipal(userIdOpt.get().toString());
             accessor.setUser(principal);
@@ -74,15 +74,15 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
             log.warn("Token inválido para conexão WebSocket: {}", token);
         }
     }
-    
+
     // Simple Principal implementation
     private static class TokenPrincipal implements Principal {
         private final String name;
-        
+
         public TokenPrincipal(String name) {
             this.name = name;
         }
-        
+
         @Override
         public String getName() {
             return name;

@@ -7,7 +7,6 @@ import com.meli.notifier.forecast.application.dto.TokenDTO;
 import com.meli.notifier.forecast.domain.mapper.SessionMapper;
 import com.meli.notifier.forecast.domain.model.database.Session;
 import com.meli.notifier.forecast.domain.service.SessionService;
-import com.meli.notifier.forecast.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,11 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Session validateToken(String token) {
-
+    @Transactional(readOnly = true)
+    public Session findById(String token) {
+        log.debug("Finding session by id: {}", token);
+        return sessionRepository.findById(token)
+                .map(sessionMapper::toModel)
+                .orElse(null);
     }
 }

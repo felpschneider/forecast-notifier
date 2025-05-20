@@ -2,7 +2,6 @@ package com.meli.notifier.forecast.domain.service.impl;
 
 import com.meli.notifier.forecast.adapter.persistence.entity.UserEntity;
 import com.meli.notifier.forecast.adapter.persistence.repository.UserRepository;
-import com.meli.notifier.forecast.domain.exception.NotFoundException;
 import com.meli.notifier.forecast.domain.mapper.UserMapper;
 import com.meli.notifier.forecast.domain.model.database.User;
 import com.meli.notifier.forecast.domain.service.UserService;
@@ -11,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,9 +40,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         log.debug("Finding user by ID: {}", id);
-        return userMapper.toModel(userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found")));
+        return userRepository.findById(id).map(userMapper::toModel);
     }
 }
-

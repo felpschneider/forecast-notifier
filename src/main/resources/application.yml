@@ -37,13 +37,35 @@ spring:
     redis:
       time-to-live: 600000
       cache-null-values: false
+  quartz:
+    job-store-type: jdbc
+    scheduler-name: ForecastNotifierScheduler
+    wait-for-jobs-to-complete-on-shutdown: true
+    overwrite-existing-jobs: true
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: weather-scheduler
+            instanceId: AUTO
+          threadPool:
+            threadCount: 10
+            threadPriority: 5
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            useProperties: false
+            misfireThreshold: 5000
+            isClustered: true
+    auto-startup: true
   kafka:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        # Configuração para garantir entrega de mensagens
         acks: all
         retries: 3
         retry.backoff.ms: 1000
@@ -55,7 +77,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: com.meli.notifier.forecast.domain.event
-        # Configuração para consumo mais confiável
         max.poll.interval.ms: 300000
         enable.auto.commit: false
       retry:
@@ -70,11 +91,8 @@ logging:
     org.springframework.data.redis: DEBUG
     org.springframework.kafka: INFO
     io.lettuce.core: DEBUG
-
-app:
-  notification:
-    scheduler:
-      cron: 0 * * * * *  # A cada minuto
+    org.quartz: DEBUG
+    org.postgresql: DEBUG
 
 external:
   services:

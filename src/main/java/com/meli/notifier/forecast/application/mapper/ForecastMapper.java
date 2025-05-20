@@ -14,7 +14,7 @@ public interface ForecastMapper {
     @Mapping(target = "cityName", source = "forecastResponseDTO.name")
     @Mapping(target = "stateCode", source = "forecastResponseDTO.stateCode")
     @Mapping(target = "updateDate", expression = "java(java.time.LocalDate.parse(forecastResponseDTO.getUpdateDate()))")
-    @Mapping(target = "weatherForecast", source = "forecastResponseDTO.forecasts")
+    @Mapping(target = "weatherForecast", source = "forecastResponseDTO")
     @Mapping(target = "waveForecast", source = "waveForecast")
     CombinedForecastDTO toDTO(ForecastResponseDTO forecastResponseDTO, WaveForecastResponseDTO waveForecast);
 

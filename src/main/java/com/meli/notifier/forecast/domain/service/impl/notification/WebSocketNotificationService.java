@@ -1,6 +1,7 @@
-package com.meli.notifier.forecast.domain.service.notification;
+package com.meli.notifier.forecast.domain.service.impl.notification;
 
 import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -9,12 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WebSocketNotificationService {
+public class WebSocketNotificationService implements NotificationService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendNotificationToUser(NotificationPayload notification) {
-        String userDestination = "/queue/alerts";
+        String userDestination = "/queue/notifications/alerts";
         String userId = String.valueOf(notification.getUserId());
         
         log.info("Sending Websocket notification for userId: {}", userId);

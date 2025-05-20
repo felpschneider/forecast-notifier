@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.domain.mapper;
 
 import com.meli.notifier.forecast.adapter.persistence.entity.UserEntity;
-import com.meli.notifier.forecast.application.dto.request.SignInRequestDTO;
+import com.meli.notifier.forecast.application.dto.request.RegisterRequestDTO;
 import com.meli.notifier.forecast.domain.model.database.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,7 +17,7 @@ public interface UserMapper {
     User toModel(UserEntity entity);
 
     @Mapping(target = "passwordHash", source = "password")
-    User toModel(SignInRequestDTO signInRequestDTO);
+    User toModel(RegisterRequestDTO registerRequestDTO);
 
     UserEntity toEntity(User model);
 

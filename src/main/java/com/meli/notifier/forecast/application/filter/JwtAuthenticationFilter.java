@@ -43,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = authHeader.substring(7);
 
         try {
-            var session = sessionService.validateToken(token);
+            var session = sessionService.findById(token);
 
-            if (session.getExpiresAt().isAfter(LocalDateTime.now())) {
-                User user = userService.findById(session.getUser().getId());
+            if (session != null && session.getExpiresAt().isAfter(LocalDateTime.now())) {
+                User user = userService.findById(session.getUser().getId()).get();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

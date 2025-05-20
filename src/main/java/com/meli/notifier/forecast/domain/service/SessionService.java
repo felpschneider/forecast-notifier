@@ -6,5 +6,5 @@ import com.meli.notifier.forecast.domain.model.database.Session;
 
 public interface SessionService {
     TokenDTO createSession(UserEntity user);
-    Session validateToken(String token);
+    Session findById(String token);
 }

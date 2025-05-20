@@ -2,7 +2,7 @@ package com.meli.notifier.forecast.application.controller.web;
 
 import com.meli.notifier.forecast.application.dto.TokenDTO;
 import com.meli.notifier.forecast.application.dto.request.LoginRequestDTO;
-import com.meli.notifier.forecast.application.dto.request.SignInRequestDTO;
+import com.meli.notifier.forecast.application.dto.request.RegisterRequestDTO;
 import com.meli.notifier.forecast.domain.mapper.UserMapper;
 import com.meli.notifier.forecast.domain.service.AuthService;
 import com.meli.notifier.forecast.domain.service.UserService;
@@ -52,7 +52,7 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "User already exists with the provided email or phone")
     })
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid SignInRequestDTO request) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDTO request) {
         log.info("Registering new user with email: {}", request.getEmail());
         userService.createUser(userMapper.toModel(request));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
