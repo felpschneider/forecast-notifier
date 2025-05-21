@@ -14,6 +14,7 @@ import feign.FeignException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class CptecServiceImpl implements CptecService {
     private final ForecastMapper forecastMapper;
 
     @Override
+    @Cacheable(value = "citiesCache", key = "#cityName")
+    @Retry(name = "cptecRetry")
     public List<City> findCities(String cityName) {
         try {
             var response = cptecClient.findCities(cityName);
@@ -49,8 +52,8 @@ public class CptecServiceImpl implements CptecService {
     }
 
     @Override
-//    @Cacheable(value = "forecastCache", key = "#cityId")
-    @Retry(name = "cptecRetry")
+//    @Cacheable(value = "weatherCache", key = "#cityId")
+//    @Retry(name = "cptecRetry")
     public CombinedForecastDTO getCombinedForecast(Long cityId) {
         ForecastResponseDTO weatherResponse = getForecast(cityId);
         int today = 0;
@@ -60,10 +63,16 @@ public class CptecServiceImpl implements CptecService {
             waveForecast = getWaveForecast(cityId, today);
         }
 
-        return forecastMapper.toDTO(weatherResponse, waveForecast);
+        return CombinedForecastDTO.builder()
+                .cityName(weatherResponse.getName())
+                .stateCode(weatherResponse.getStateCode())
+                .weatherForecast(forecastMapper.toWrapper(weatherResponse))
+                .waveForecast(waveForecast != null ? forecastMapper.toWrapper(waveForecast) : null)
+                .build();
     }
 
-    private ForecastResponseDTO getForecast(Long cityId) {
+    @Cacheable(value = "weatherCache", key = "'weather:' + #cityId")
+    public ForecastResponseDTO getForecast(Long cityId) {
         try {
             return cptecClient.getForecast(cityId);
         } catch (FeignException e) {
@@ -71,7 +80,8 @@ public class CptecServiceImpl implements CptecService {
         }
     }
 
-    private WaveForecastResponseDTO getWaveForecast(Long cityId, int day) {
+    @Cacheable(value = "waveForecastCache", key = "'wave:' + #cityId + ':' + #day")
+    public WaveForecastResponseDTO getWaveForecast(Long cityId, int day) {
         try {
             return cptecClient.getWaveForecast(cityId, day);
         } catch (FeignException e) {
@@ -84,27 +94,28 @@ public class CptecServiceImpl implements CptecService {
         return new ServiceUnavailableException("CPTEC API is currently unavailable");
     }
 
-
     public Boolean isCityCoastal(Long cityId) {
         Optional<City> cityOpt = cityService.findById(cityId);
 
-        if (cityOpt.isPresent()) {
+        if (cityOpt.isPresent() && cityOpt.get().getIsCoastal() != null) {
             var city = cityOpt.get();
             return city.getIsCoastal();
         }
+
+        City city = cityOpt.get();
 
         var waveForecast = getWaveForecast(cityId, 0);
 
         if (waveForecast == null || waveForecast.getName().equalsIgnoreCase("undefined")) {
             log.warn("City with id: {} is not coastal", cityId);
-            cityService.saveCity(cityId);
+            city.setIsCoastal(false);
+            cityService.saveCity(city);
             return false;
         }
 
         log.info("City {} with id: {} is coastal", waveForecast.getName(), cityId);
+        city.setIsCoastal(true);
         cityService.saveCity(cityId);
         return true;
-
     }
-
 }

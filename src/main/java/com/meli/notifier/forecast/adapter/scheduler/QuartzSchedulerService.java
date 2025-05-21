@@ -50,20 +50,15 @@ public class QuartzSchedulerService {
                 return;
             }
 
-            // Criar JobDetail com ID da subscrição
             JobDetail jobDetail = buildJobDetail(subscription);
-
-            // Criar CronTrigger com a expressão cron da subscrição
             CronTrigger trigger = buildCronTrigger(subscription);
 
-            // Verificar se o job já existe
             if (scheduler.checkExists(jobDetail.getKey())) {
-                // Atualizar o trigger se o job já existir
                 scheduler.rescheduleJob(trigger.getKey(), trigger);
                 log.info("Job existente atualizado para a subscrição ID: {}",
                         subscription.getId());
             }
-            // Agendar um novo job se não existir
+
             scheduler.scheduleJob(jobDetail, trigger);
             log.info("Novo job agendado para a subscrição ID: {}", subscription.getId());
         } catch (SchedulerException e) {
@@ -84,26 +79,14 @@ public class QuartzSchedulerService {
         }
     }
 
-    /**
-     * Constrói um JobDetail para a subscrição fornecida.
-     *
-     * @param subscription A entidade de subscrição
-     * @return O JobDetail configurado
-     */
     private JobDetail buildJobDetail(Subscription subscription) {
-        return JobBuilder.newJob(CronTriggerJob.class)
+        return JobBuilder.newJob(NotificationJob.class)
                 .withIdentity("sub-" + subscription.getId(), JOB_GROUP)
                 .usingJobData(SUBSCRIPTION_ID_KEY, subscription.getId())
                 .storeDurably()
                 .build();
     }
 
-    /**
-     * Constrói um CronTrigger para a subscrição fornecida.
-     *
-     * @param subscription A entidade de subscrição
-     * @return O CronTrigger configurado
-     */
     private CronTrigger buildCronTrigger(Subscription subscription) {
         return TriggerBuilder.newTrigger()
                 .withIdentity("sub-" + subscription.getId(), TRIGGER_GROUP)

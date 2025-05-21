@@ -3,6 +3,7 @@ package com.meli.notifier.forecast.adapter.integration.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.Logger;
 import feign.codec.Decoder;
 import org.springframework.beans.factory.ObjectFactory;
@@ -25,6 +26,7 @@ public class CptecClientConfig {
     public Decoder cptecFeignDecoder() {
         ObjectMapper xmlMapper = new XmlMapper();
         xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        xmlMapper.registerModule(new JavaTimeModule());
 
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter(xmlMapper);
         ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(messageConverter);
@@ -32,3 +34,4 @@ public class CptecClientConfig {
         return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
     }
 }
+

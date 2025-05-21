@@ -30,9 +30,9 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
 
             try {
                 Map<String, Object> message = Map.of(
-                    "type", "CONNECTED",
-                    "timestamp", System.currentTimeMillis(),
-                    "message", "Connected successfully"
+                        "type", "CONNECTED",
+                        "timestamp", System.currentTimeMillis(),
+                        "message", "Connected successfully"
                 );
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
             } catch (IOException e) {
@@ -46,8 +46,8 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
         try {
             if (message.getPayload().equalsIgnoreCase("ping")) {
                 Map<String, Object> pongResponse = Map.of(
-                    "type", "PONG",
-                    "timestamp", System.currentTimeMillis()
+                        "type", "PONG",
+                        "timestamp", System.currentTimeMillis()
                 );
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(pongResponse)));
             }
@@ -69,12 +69,12 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
         WebSocketSession session = userSessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                String payload = objectMapper.writeValueAsString(Map.of(
-                    "type", "NOTIFICATION",
-                    "timestamp", System.currentTimeMillis(),
-                    "data", notification
-                ));
-                session.sendMessage(new TextMessage(payload));
+                Map<String, Object> payload = Map.of(
+                        "type", "NOTIFICATION",
+                        "timestamp", System.currentTimeMillis(),
+                        "data", notification
+                );
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
                 log.debug("Notification sent to user: {}", userId);
             } catch (IOException e) {
                 log.error("Error sending notification to user: {}", userId, e);

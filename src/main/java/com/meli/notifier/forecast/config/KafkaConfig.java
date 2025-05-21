@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
@@ -40,6 +41,11 @@ public class KafkaConfig {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         return new KafkaAdmin(configs);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Object> defaultRetryTopicKafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
@@ -73,6 +79,8 @@ public class KafkaConfig {
 
     @Bean
     public ProducerFactory<String, NotificationPayload> notificationProducerFactory() {
+//        Map<String, Object> configProps = producerFactory().getConfigurationProperties(); //todo: trocar a de baixo por essa daqui
+//        return new DefaultKafkaProducerFactory<>(configProps);
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -104,27 +112,28 @@ public class KafkaConfig {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.meli.notifier.forecast.domain.event");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.meli.notifier.forecast.domain.model.websocket,com.meli.notifier.forecast.domain.event,java.util,java.lang");
         return new DefaultKafkaConsumerFactory<>(props);
-    }    @Bean
+    }
+
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = 
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(3); // 3 threads consumindo em paralelo
+        factory.setConcurrency(3);
         
-        // Configurar para confirmação manual (não usar enable.auto.commit)
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         
-        // Configuração de retentativas com backoff fixo (5 segundos, 3 tentativas)
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(
             (consumerRecord, exception) -> {
                 log.error("Falha definitiva processando mensagem: {}", exception.getMessage(), exception);
-                // Aqui você poderia implementar o envio para a DLQ manualmente
             },
-            new FixedBackOff(5000L, 3L)
+            new FixedBackOff(2000L, 3L)
         );
         factory.setCommonErrorHandler(errorHandler);
         

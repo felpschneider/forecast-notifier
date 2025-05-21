@@ -53,12 +53,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .cronExpression(request.getCronExpression())
                 .active(true)
                 .build();
+                
         SubscriptionEntity savedEntity = subscriptionRepository.save(subscriptionEntity);
-
         Subscription sub = subscriptionMapper.toModel(savedEntity);
-
         eventPublisher.publishEvent(new SubscriptionEvent.SubscriptionSaved(sub));
-
         log.info("Subscription created successfully with id: {}", savedEntity.getId());
         return sub;
     }
@@ -67,7 +65,50 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional(readOnly = true)
     public List<Subscription> findAllByActiveIsTrue() {
         log.info("Fetching all active subscriptions");
-        return subscriptionRepository.findAllByActiveIsTrue().stream().map(subscriptionMapper::toModel).toList();
+        return subscriptionRepository.findAllByActiveIsTrue().stream()
+                .map(subscriptionMapper::toModel)
+                .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Subscription> findAllByUser(User user) {
+        log.info("Fetching all subscriptions for user id: {}", user.getId());
+        return subscriptionRepository.findAllByUserId(user.getId()).stream()
+                .map(subscriptionMapper::toModel)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Subscription> findById(Long id) {
+        log.debug("Finding subscription by id: {}", id);
+        return subscriptionRepository.findById(id)
+                .map(subscriptionMapper::toModel);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Subscription> findByIdAndUser(Long id, User user) {
+        log.info("Finding subscription by id: {} for user id: {}", id, user.getId());
+        return subscriptionRepository.findByIdAndUserId(id, user.getId())
+                .map(subscriptionMapper::toModel);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateSubscription(Long id, User user) {
+        log.info("Deactivating subscription id: {} for user id: {}", id, user.getId());
+        
+        SubscriptionEntity subscription = subscriptionRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new NotFoundException("Subscription not found with id: " + id));
+
+        subscription.setActive(false);
+        subscriptionRepository.save(subscription);
+        
+        // Publish event for further processing
+        eventPublisher.publishEvent(new SubscriptionEvent.SubscriptionDeleted(id));
+        
+        log.info("Subscription successfully deactivated with id: {}", id);
+    }
 }

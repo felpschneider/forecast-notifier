@@ -6,9 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,18 +22,26 @@ public class WebSocketController {
 
     private final WebSocketNotificationService webSocketNotificationService;
 
-    @MessageMapping("/notifications/send")
-    public void receiveNotification(@Payload NotificationPayload payload) {
-        log.info("Received notification payload: {}", payload);
+    @MessageMapping("/send")
+    @SendTo("/topic/notifications")
+    public void receiveNotification(@Payload NotificationPayload payload, Principal principal) {
+        log.info("Received notification payload from user {}: {}", principal.getName(), payload);
         webSocketNotificationService.sendNotificationToUser(payload);
     }
 
-    @MessageMapping("/notifications/ping")
-    @SendToUser("/queue/notifications/pong")
-    public Map<String, Object> handlePing(@Payload(required = false) String message) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", System.currentTimeMillis());
-        response.put("status", "ok");
-        return response;
+    @SubscribeMapping("/queue/notifications/alerts")
+    public Map<String, Object> subscribeToNotifications(SimpMessageHeaderAccessor headerAccessor) {
+        Principal user = headerAccessor.getUser();
+        if (user != null) {
+            String userId = user.getName();
+            log.info("User {} subscribed to notifications alerts", userId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("type", "SUBSCRIPTION_ACK");
+            response.put("message", "Successfully subscribed to notifications");
+            response.put("timestamp", System.currentTimeMillis());
+            return response;
+        }
+        return null;
     }
 }
