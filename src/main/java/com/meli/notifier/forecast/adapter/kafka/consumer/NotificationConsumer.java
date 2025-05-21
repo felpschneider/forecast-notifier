@@ -4,7 +4,6 @@ import com.meli.notifier.forecast.config.KafkaTopicConfig;
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
 import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
 import com.meli.notifier.forecast.domain.service.impl.notification.NotificationStrategyService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -26,7 +25,7 @@ public class NotificationConsumer {
 
     @KafkaListener(
             groupId = "forecast-notifier-dispatchers",
-            topics = KafkaTopicConfig.NOTIFICATION_OUTBOUND_TOPIC,
+            topics = KafkaTopicConfig.NOTIFICATION_TOPIC,
             concurrency = "3"
     )
     @Retryable(

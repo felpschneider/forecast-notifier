@@ -17,7 +17,7 @@ public class NotificationKafkaConsumer {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(topics = KafkaTopicConfig.NOTIFICATION_OUTBOUND_TOPIC, 
+    @KafkaListener(topics = KafkaTopicConfig.NOTIFICATION_TOPIC,
                   groupId = "${spring.kafka.consumer.group-id}",
                   containerFactory = "kafkaListenerContainerFactory")
     @RetryableTopic(backoff = @Backoff(delay = 2000))

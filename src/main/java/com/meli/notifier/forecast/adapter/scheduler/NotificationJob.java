@@ -18,10 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * Quartz job for processing scheduled notifications.
- * This job checks weather conditions for subscriptions and sends notifications if needed.
- */
 @Slf4j
 @Component
 @NoArgsConstructor

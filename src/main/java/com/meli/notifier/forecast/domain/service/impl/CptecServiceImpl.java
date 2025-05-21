@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +53,8 @@ public class CptecServiceImpl implements CptecService {
     }
 
     @Override
-//    @Cacheable(value = "weatherCache", key = "#cityId")
-//    @Retry(name = "cptecRetry")
+    @Cacheable(value = "weatherCache", key = "#cityId")
+//    @Retry(name = "cptecRetry", fallbackMethod = "getForecastFallback")
     public CombinedForecastDTO getCombinedForecast(Long cityId) {
         ForecastResponseDTO weatherResponse = getForecast(cityId);
         int today = 0;
@@ -94,6 +95,7 @@ public class CptecServiceImpl implements CptecService {
         return new ServiceUnavailableException("CPTEC API is currently unavailable");
     }
 
+    @Transactional
     public Boolean isCityCoastal(Long cityId) {
         Optional<City> cityOpt = cityService.findById(cityId);
 

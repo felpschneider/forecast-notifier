@@ -8,23 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * Implementação do EventPublisherPort que utiliza Kafka para publicar notificações.
- * <p>
- * Publica as notificações no tópico Kafka notification.outbound para processamento
- * pelo NotificationKafkaConsumer que encaminhará para WebSocket.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaEventPublisher implements EventPublisherPort {
+public class KafkaEventProducer implements EventPublisherPort {
 
     private final KafkaTemplate<String, NotificationPayload> kafkaTemplate;
 
     @Override
     public void publishNotification(String userId, NotificationPayload payload) {
         try {
-            kafkaTemplate.send(KafkaTopicConfig.NOTIFICATION_OUTBOUND_TOPIC, userId, payload)
+            kafkaTemplate.send(KafkaTopicConfig.NOTIFICATION_TOPIC, userId, payload)
                     .whenComplete((result, ex) -> {
                         if (ex == null) {
                             log.debug("Notificação enviada para Kafka: userId={}, offset={}", userId, result.getRecordMetadata().offset());

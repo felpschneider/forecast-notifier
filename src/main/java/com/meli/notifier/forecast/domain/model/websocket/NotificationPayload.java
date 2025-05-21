@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class NotificationPayload {
     private Long userId;
     private Long subscriptionId;
+    private Boolean webOptIn;
     private CombinedForecastDTO combinedForecast;
 }

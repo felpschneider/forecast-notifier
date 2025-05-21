@@ -36,6 +36,7 @@
 		<lettuce.version>6.6.0.RELEASE</lettuce.version>
 		<cron-utils-version>9.2.0</cron-utils-version>
 		<postgresql.version>42.7.3</postgresql.version>
+		<jackson-datatype>2.19.0 </jackson-datatype>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -158,6 +159,11 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson-datatype}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
