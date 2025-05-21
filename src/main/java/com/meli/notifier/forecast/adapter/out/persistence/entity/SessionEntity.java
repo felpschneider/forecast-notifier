@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.persistence.entity;
+package com.meli.notifier.forecast.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

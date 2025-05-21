@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.persistence.entity;
+package com.meli.notifier.forecast.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +28,15 @@ public class NotificationChannelEntity {
 
     @Column(name = "web_opt_in", nullable = false)
     private Boolean webOptIn;
+
+    @Column(name = "web_opt_in", nullable = false)
+    private Boolean email_opt_in;
+
+    @Column(name = "web_opt_in", nullable = false)
+    private Boolean sms_opt_in;
+
+    @Column(name = "web_opt_in", nullable = false)
+    private Boolean push_opt_in;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
