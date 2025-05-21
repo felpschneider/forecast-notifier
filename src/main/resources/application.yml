@@ -1,6 +1,10 @@
+server:
+  servlet:
+    context-path: /api
+  port: 8080
+
 spring:
   application:
-
     name: Forecast Notifier
   datasource:
     url: jdbc:postgresql://localhost:5432/forecast_notifier
@@ -19,8 +23,79 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
-#  data:
-#    redis:
-#      host: localhost
-#      port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000
+      connect-timeout: 2000
+      client-name: forecast-notifier
+      client-type: lettuce
+      database: 0
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000
+      cache-null-values: false
+  quartz:
+    job-store-type: jdbc
+    scheduler-name: ForecastNotifierScheduler
+    wait-for-jobs-to-complete-on-shutdown: true
+    overwrite-existing-jobs: true
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: weather-scheduler
+            instanceId: AUTO
+          threadPool:
+            threadCount: 10
+            threadPriority: 5
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            useProperties: false
+            misfireThreshold: 5000
+            isClustered: true
+    auto-startup: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        acks: all
+        retries: 3
+        retry.backoff.ms: 1000
+        enable.idempotence: true
+    consumer:
+      group-id: forecast-notifier-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.meli.notifier.forecast.domain.event
+        max.poll.interval.ms: 300000
+        enable.auto.commit: false
+      retry:
+        max-attempts: 3
+        initial-interval: 1000
+        multiplier: 2.0
+        max-interval: 10000
 
+logging:
+  level:
+    org.springframework: INFO
+    org.springframework.data.redis: DEBUG
+    org.springframework.kafka: INFO
+    io.lettuce.core: DEBUG
+    org.quartz: DEBUG
+    org.postgresql: INFO
+
+external:
+  services:
+    cptec:
+      api:
+        base-url: http://servicos.cptec.inpe.br/XML

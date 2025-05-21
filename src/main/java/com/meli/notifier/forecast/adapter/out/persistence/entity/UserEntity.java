@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.persistence.entity;
+package com.meli.notifier.forecast.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,33 +11,34 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "subscriptions")
+@Table(name = "users")
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubscriptionEntity {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @Column(nullable = false)
+    private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", nullable = false, referencedColumnName = "id_cptec")
-    private CityEntity city;
+    @Column(unique = true)
+    private String email;
 
-    @Column(name = "cron_expression", nullable = false)
-    private String cronExpression;
+    @Column(name = "phone_number", unique = true)
+    private String phoneNumber;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "opt_in", nullable = false)
+    private Boolean optIn;
 
     @Column(nullable = false)
     private Boolean active;
-
-    @Column(name = "last_sent_at")
-    private LocalDateTime lastSentAt;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
