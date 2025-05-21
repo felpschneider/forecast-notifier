@@ -1,32 +1,27 @@
 package com.meli.notifier.forecast.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 @Configuration
-@EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // Definindo destinos de mensagens de broadcast e filas
-        registry.enableSimpleBroker("/topic", "/queue");
-        
-        // Prefixo para mensagens mapeadas para métodos anotados com @MessageMapping
-        registry.setApplicationDestinationPrefixes("/app");
-        
-        // Configuração para destinos privados de usuário
-        registry.setUserDestinationPrefix("/user");
+    private final NotificationWebSocketHandler webSocketHandler;
+    private final WebSocketAuthInterceptor authInterceptor;
+
+    public WebSocketConfig(NotificationWebSocketHandler webSocketHandler,
+                           WebSocketAuthInterceptor authInterceptor) {
+        this.webSocketHandler = webSocketHandler;
+        this.authInterceptor = authInterceptor;
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Registra o endpoint principal de conexão WebSocket
-        registry.addEndpoint("/notifications")
-            .setAllowedOriginPatterns("*") // Em produção, restrinja os domínios permitidos
-            .withSockJS();
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketHandler, "/notifications")
+                .addInterceptors(authInterceptor)
+                .setAllowedOrigins("*");
     }
 }

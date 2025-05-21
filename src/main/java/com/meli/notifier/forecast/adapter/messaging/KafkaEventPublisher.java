@@ -1,12 +1,12 @@
 package com.meli.notifier.forecast.adapter.messaging;
 
 import com.meli.notifier.forecast.config.KafkaTopicConfig;
+import com.meli.notifier.forecast.config.NotificationWebSocketHandler;
 import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
 import com.meli.notifier.forecast.port.out.EventPublisherPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class KafkaEventPublisher implements EventPublisherPort {
 
     private final KafkaTemplate<String, NotificationPayload> kafkaTemplate;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationWebSocketHandler notificationWebSocketHandler;
 
     @Override
     public void publishNotification(String userId, NotificationPayload payload) {
@@ -38,10 +38,9 @@ public class KafkaEventPublisher implements EventPublisherPort {
                         }
                     });
             
-            // Publicar diretamente para o WebSocket do usuário específico
-            String destination = "/user/" + userId + "/queue/notifications";
-            messagingTemplate.convertAndSend(destination, payload);
-            
+            // Publicar diretamente para o WebSocket do usuário específico usando NotificationWebSocketHandler
+            notificationWebSocketHandler.sendNotificationToUser(Long.parseLong(userId), payload);
+
             log.info("Notificação publicada com sucesso: userId={}", userId);
         } catch (Exception e) {
             log.error("Erro ao publicar notificação: userId={}", userId, e);

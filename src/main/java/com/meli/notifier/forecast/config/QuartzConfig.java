@@ -42,11 +42,6 @@ public class QuartzConfig {
         return factory;
     }
 
-//    @Bean(name = "quartzProperties")
-//    public Properties quartzProps() {
-//        return new Properties();
-//    }
-
     @Bean
     public SpringAutowireJobFactory jobFactory() {
         return new SpringAutowireJobFactory();

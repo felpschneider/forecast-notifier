@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.adapter.scheduler;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.SubscriptionEntity;
-import com.meli.notifier.forecast.adapter.persistence.repository.SubscriptionRepository;
+import com.meli.notifier.forecast.domain.model.database.Subscription;
+import com.meli.notifier.forecast.domain.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -16,28 +16,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuartzSchedulerService {
 
-//    private final SchedulerFactoryBean schedulerFactoryBean;
     private final Scheduler scheduler;
-    private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionService subscriptionService;
 
     private static final String SUBSCRIPTION_ID_KEY = "subscriptionId";
     private static final String JOB_GROUP = "subscription-jobs";
     private static final String TRIGGER_GROUP = "subscription-triggers";
 
-    /**
-     * Método executado após o startup da aplicação para carregar e agendar
-     * todas as subscrições ativas no banco de dados.
-     */
     @EventListener(ApplicationReadyEvent.class)
     public void scheduleAllActiveSubscriptions() {
         try {
             log.info("Iniciando agendamento de todas as subscrições ativas");
-            List<SubscriptionEntity> activeSubscriptions = subscriptionRepository
+            List<Subscription> activeSubscriptions = subscriptionService
                     .findAllByActiveIsTrue();
 
             log.info("Encontradas {} subscrições ativas para agendar", activeSubscriptions.size());
 
-            for (SubscriptionEntity subscription : activeSubscriptions) {
+            for (Subscription subscription : activeSubscriptions) {
                 scheduleOrUpdateJob(subscription);
             }
 
@@ -47,12 +42,7 @@ public class QuartzSchedulerService {
         }
     }
 
-    /**
-     * Agenda um novo job ou atualiza um existente para a subscrição fornecida.
-     *
-     * @param subscription A entidade de subscrição para agendar
-     */
-    public void scheduleOrUpdateJob(SubscriptionEntity subscription) {
+    public void scheduleOrUpdateJob(Subscription subscription) {
         try {
             if (!subscription.getActive()) {
                 deleteJob(subscription.getId());
@@ -72,26 +62,17 @@ public class QuartzSchedulerService {
                 scheduler.rescheduleJob(trigger.getKey(), trigger);
                 log.info("Job existente atualizado para a subscrição ID: {}",
                         subscription.getId());
-            } else {
-                // Agendar um novo job se não existir
-                scheduler.scheduleJob(jobDetail, trigger);
-                log.info("Novo job agendado para a subscrição ID: {}",
-                        subscription.getId());
             }
+            // Agendar um novo job se não existir
+            scheduler.scheduleJob(jobDetail, trigger);
+            log.info("Novo job agendado para a subscrição ID: {}", subscription.getId());
         } catch (SchedulerException e) {
-            log.error("Erro ao agendar job para a subscrição ID: {}",
-                    subscription.getId(), e);
+            log.error("Erro ao agendar job para a subscrição ID: {}", subscription.getId(), e);
         }
     }
 
-    /**
-     * Remove um job agendado para a subscrição com o ID fornecido.
-     *
-     * @param subscriptionId ID da subscrição a ser removida
-     */
     public void deleteJob(Long subscriptionId) {
         try {
-
             JobKey jobKey = new JobKey("sub-" + subscriptionId, JOB_GROUP);
             if (scheduler.checkExists(jobKey)) {
                 scheduler.deleteJob(jobKey);
@@ -109,7 +90,7 @@ public class QuartzSchedulerService {
      * @param subscription A entidade de subscrição
      * @return O JobDetail configurado
      */
-    private JobDetail buildJobDetail(SubscriptionEntity subscription) {
+    private JobDetail buildJobDetail(Subscription subscription) {
         return JobBuilder.newJob(CronTriggerJob.class)
                 .withIdentity("sub-" + subscription.getId(), JOB_GROUP)
                 .usingJobData(SUBSCRIPTION_ID_KEY, subscription.getId())
@@ -123,7 +104,7 @@ public class QuartzSchedulerService {
      * @param subscription A entidade de subscrição
      * @return O CronTrigger configurado
      */
-    private CronTrigger buildCronTrigger(SubscriptionEntity subscription) {
+    private CronTrigger buildCronTrigger(Subscription subscription) {
         return TriggerBuilder.newTrigger()
                 .withIdentity("sub-" + subscription.getId(), TRIGGER_GROUP)
                 .withSchedule(CronScheduleBuilder.cronSchedule(subscription.getCronExpression())

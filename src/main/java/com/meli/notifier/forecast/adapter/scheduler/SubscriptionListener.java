@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.adapter.scheduler;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.SubscriptionEntity;
 import com.meli.notifier.forecast.domain.event.SubscriptionEvent;
+import com.meli.notifier.forecast.domain.model.database.Subscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class SubscriptionListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSubscriptionSaved(SubscriptionEvent.SubscriptionSaved event) {
-        SubscriptionEntity subscription = event.getSubscription();
+        Subscription subscription = event.getSubscription();
         log.info("Recebido evento de subscrição salva para o ID: {}", subscription.getId());
         schedulerService.scheduleOrUpdateJob(subscription);
     }

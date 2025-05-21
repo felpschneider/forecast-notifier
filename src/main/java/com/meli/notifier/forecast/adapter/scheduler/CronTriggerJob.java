@@ -11,11 +11,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-/**
- * Job que é executado pelo Quartz Scheduler de acordo com as expressões cron
- * configuradas. Publica um evento TriggerEvent no tópico Kafka para processamento
- * assíncrono.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -44,3 +39,4 @@ public class CronTriggerJob implements Job {
         }
     }
 }
+

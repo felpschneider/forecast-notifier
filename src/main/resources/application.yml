@@ -92,7 +92,7 @@ logging:
     org.springframework.kafka: INFO
     io.lettuce.core: DEBUG
     org.quartz: DEBUG
-    org.postgresql: DEBUG
+    org.postgresql: INFO
 
 external:
   services:

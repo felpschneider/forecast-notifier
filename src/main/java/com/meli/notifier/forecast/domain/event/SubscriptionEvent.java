@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.event;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.SubscriptionEntity;
+import com.meli.notifier.forecast.domain.model.database.Subscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,7 +9,7 @@ public abstract class SubscriptionEvent {
     @Getter
     @RequiredArgsConstructor
     public static class SubscriptionSaved extends SubscriptionEvent {
-        private final SubscriptionEntity subscription;
+        private final Subscription subscription;
     }
 
     @Getter
