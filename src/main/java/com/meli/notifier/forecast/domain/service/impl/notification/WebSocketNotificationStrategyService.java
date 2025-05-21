@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WebSocketNotificationService implements NotificationService {
+public class WebSocketNotificationStrategyService implements NotificationService {
 
     private final NotificationWebSocketHandler webSocketHandler;
     private final NotificationCacheService notificationCacheService;

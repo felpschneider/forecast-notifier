@@ -11,38 +11,30 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Implementação do padrão Strategy para diferentes canais de notificação.
- * Atualmente suporta apenas notificações web, mas está preparado para
- * expandir para outros canais como push, email e SMS no futuro.
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationStrategyService {
+public class NotificationStrategyServiceImpl implements NotificationService {
 
-    private final WebSocketNotificationService webSocketNotificationService;
-    // Adicionar outros serviços de notificação quando implementados:
+    private final WebSocketNotificationStrategyService webSocketStrategy;
     // private final EmailNotificationService emailNotificationService;
     // private final PushNotificationService pushNotificationService;
     // private final SmsNotificationService smsNotificationService;
 
-    // Map associando cada canal a seu respectivo serviço
     private final Map<NotificationChannelsEnum, NotificationService> notificationStrategies = new EnumMap<>(NotificationChannelsEnum.class);
 
     public void initStrategies() {
-        notificationStrategies.put(NotificationChannelsEnum.WEB, webSocketNotificationService);
-        // Adicionar outros canais quando implementados
-        // notificationStrategies.put(NotificationChannelsEnum.EMAIL, emailNotificationService);
-        // notificationStrategies.put(NotificationChannelsEnum.PUSH, pushNotificationService);
-        // notificationStrategies.put(NotificationChannelsEnum.SMS, smsNotificationService);
+        notificationStrategies.put(NotificationChannelsEnum.WEB, webSocketStrategy);
+        notificationStrategies.put(NotificationChannelsEnum.EMAIL, emailNotificationService);
+        notificationStrategies.put(NotificationChannelsEnum.PUSH, pushNotificationService);
+        notificationStrategies.put(NotificationChannelsEnum.SMS, smsNotificationService);
     }
 
     /**
      * Envia uma notificação por todos os canais habilitados para o usuário.
      * Verifica quais canais estão ativos nas preferências do usuário antes de enviar.
      *
-     * @param payload A notificação a ser enviada
+     * @param payload         A notificação a ser enviada
      * @param enabledChannels Canais habilitados para o usuário
      */
     public void sendNotification(NotificationPayload payload, Set<NotificationChannelsEnum> enabledChannels) {
@@ -51,21 +43,19 @@ public class NotificationStrategyService {
             return;
         }
 
-        // Inicializar o mapa de estratégias se ainda não foi feito
         if (notificationStrategies.isEmpty()) {
             initStrategies();
         }
 
-        // Tenta enviar por cada canal habilitado
         for (NotificationChannelsEnum channel : enabledChannels) {
             NotificationService service = notificationStrategies.get(channel);
             if (service != null) {
                 try {
                     service.sendNotificationToUser(payload);
-                    log.info("Notificação enviada via canal {} para usuário ID: {}", 
+                    log.info("Notificação enviada via canal {} para usuário ID: {}",
                             channel.getName(), payload.getUserId());
                 } catch (Exception e) {
-                    log.error("Erro ao enviar notificação via canal {} para usuário ID: {}", 
+                    log.error("Erro ao enviar notificação via canal {} para usuário ID: {}",
                             channel.getName(), payload.getUserId(), e);
                 }
             } else {
@@ -82,6 +72,6 @@ public class NotificationStrategyService {
         if (notificationStrategies.isEmpty()) {
             initStrategies();
         }
-        webSocketNotificationService.sendNotificationToUser(payload);
+        webSocketStrategy.sendNotificationToUser(payload);
     }
 }

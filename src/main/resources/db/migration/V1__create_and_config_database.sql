@@ -47,11 +47,14 @@ CREATE TABLE sessions
 
 CREATE TABLE notification_channels
 (
-    id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGINT       NOT NULL,
-    web_opt_in  BOOLEAN      NOT NULL,
-    created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id           BIGSERIAL PRIMARY KEY,
+    user_id      BIGINT    NOT NULL,
+    web_opt_in   BOOLEAN   NOT NULL,
+    email_opt_in BOOLEAN   NOT NULL,
+    sms_opt_in   BOOLEAN   NOT NULL,
+    push_opt_in  BOOLEAN   NOT NULL,
+    created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_notification_channels_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT uq_notification_channels_user UNIQUE (user_id)
 );
