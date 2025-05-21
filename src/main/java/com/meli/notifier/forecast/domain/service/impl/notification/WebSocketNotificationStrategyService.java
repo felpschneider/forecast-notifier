@@ -1,6 +1,8 @@
 package com.meli.notifier.forecast.domain.service.impl.notification;
 
 import com.meli.notifier.forecast.config.NotificationWebSocketHandler;
+import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
+import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
 import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
 import com.meli.notifier.forecast.domain.service.NotificationService;
 import com.meli.notifier.forecast.domain.service.impl.NotificationCacheService;
@@ -22,6 +24,16 @@ public class WebSocketNotificationStrategyService implements NotificationService
 
         log.info("Sending Websocket notification for userId: {}", userId);
         sendMessage(Long.valueOf(userId), notification);
+    }
+
+    @Override
+    public NotificationChannelsEnum getChannel() {
+        return NotificationChannelsEnum.WEB;
+    }
+
+    @Override
+    public boolean isEnabled(NotificationChannel preferences) {
+        return Boolean.TRUE.equals(preferences.getWebOptIn());
     }
 
     private void sendMessage(Long userId, NotificationPayload notification) {

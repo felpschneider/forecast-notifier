@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.CityEntity;
-import com.meli.notifier.forecast.adapter.persistence.entity.SubscriptionEntity;
-import com.meli.notifier.forecast.adapter.persistence.repository.CityRepository;
-import com.meli.notifier.forecast.adapter.persistence.repository.SubscriptionRepository;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.CityEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.SubscriptionEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.repository.CityRepository;
+import com.meli.notifier.forecast.adapter.out.persistence.repository.SubscriptionRepository;
 import com.meli.notifier.forecast.application.dto.request.SubscriptionRequestDTO;
 import com.meli.notifier.forecast.domain.event.SubscriptionEvent;
 import com.meli.notifier.forecast.domain.exception.NotFoundException;

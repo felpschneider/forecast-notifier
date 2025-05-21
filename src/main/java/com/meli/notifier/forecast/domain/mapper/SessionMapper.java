@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.SessionEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.SessionEntity;
 import com.meli.notifier.forecast.domain.model.database.Session;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

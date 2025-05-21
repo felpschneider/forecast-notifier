@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.UserEntity;
-import com.meli.notifier.forecast.adapter.persistence.repository.UserRepository;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.UserEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.repository.UserRepository;
 import com.meli.notifier.forecast.domain.mapper.UserMapper;
 import com.meli.notifier.forecast.domain.model.database.User;
 import com.meli.notifier.forecast.domain.service.UserService;

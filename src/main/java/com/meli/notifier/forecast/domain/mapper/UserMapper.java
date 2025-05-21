@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.UserEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.UserEntity;
 import com.meli.notifier.forecast.application.dto.request.RegisterRequestDTO;
 import com.meli.notifier.forecast.domain.model.database.User;
 import org.mapstruct.Mapper;

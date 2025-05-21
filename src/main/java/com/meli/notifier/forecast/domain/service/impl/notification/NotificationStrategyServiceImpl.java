@@ -1,43 +1,65 @@
 package com.meli.notifier.forecast.domain.service.impl.notification;
 
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
+import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
 import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.service.NotificationChannelService;
 import com.meli.notifier.forecast.domain.service.NotificationService;
+import com.meli.notifier.forecast.domain.service.NotificationStrategyService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationStrategyServiceImpl implements NotificationService {
+public class NotificationStrategyServiceImpl implements NotificationStrategyService {
 
-    private final WebSocketNotificationStrategyService webSocketStrategy;
-    // private final EmailNotificationService emailNotificationService;
-    // private final PushNotificationService pushNotificationService;
-    // private final SmsNotificationService smsNotificationService;
+    private final Collection<NotificationService> notificationServices;
+    private final NotificationChannelService notificationChannelService;
 
     private final Map<NotificationChannelsEnum, NotificationService> notificationStrategies = new EnumMap<>(NotificationChannelsEnum.class);
 
+    @PostConstruct
     public void initStrategies() {
-        notificationStrategies.put(NotificationChannelsEnum.WEB, webSocketStrategy);
-        notificationStrategies.put(NotificationChannelsEnum.EMAIL, emailNotificationService);
-        notificationStrategies.put(NotificationChannelsEnum.PUSH, pushNotificationService);
-        notificationStrategies.put(NotificationChannelsEnum.SMS, smsNotificationService);
+        // Inicializa o mapa de estratégias usando o método getChannel de cada serviço
+        notificationServices.forEach(service -> notificationStrategies.put(service.getChannel(), service));
+
+        log.info("Initialized {} notification strategies", notificationStrategies.size());
     }
 
-    /**
-     * Envia uma notificação por todos os canais habilitados para o usuário.
-     * Verifica quais canais estão ativos nas preferências do usuário antes de enviar.
-     *
-     * @param payload         A notificação a ser enviada
-     * @param enabledChannels Canais habilitados para o usuário
-     */
-    public void sendNotification(NotificationPayload payload, Set<NotificationChannelsEnum> enabledChannels) {
+    @Override
+    public void sendNotification(NotificationPayload payload) {
+        if (payload.getUserId() == null) {
+            log.error("Cannot send notification - user ID is null");
+            return;
+        }
+
+        Optional<NotificationChannel> userChannelPrefs = notificationChannelService.getNotificationChannelByUserId(payload.getUserId());
+
+        if (userChannelPrefs.isEmpty()) {
+            log.warn("User {} has no notification preferences set. Using default (web only)", payload.getUserId());
+            sendWebNotification(payload);
+            return;
+        }
+
+        NotificationChannel preferences = userChannelPrefs.get();
+
+        // Encontra todos os serviços habilitados para o usuário usando o método isEnabled de cada estratégia
+        Set<NotificationChannelsEnum> enabledChannels = notificationStrategies.values().stream()
+                .filter(service -> service.isEnabled(preferences))
+                .map(NotificationService::getChannel)
+                .collect(Collectors.toSet());
+
+        sendNotificationToEnabledChannels(payload, enabledChannels);
+    }
+
+    @Override
+    public void sendNotificationToEnabledChannels(NotificationPayload payload, Set<NotificationChannelsEnum> enabledChannels) {
         if (enabledChannels == null || enabledChannels.isEmpty()) {
             log.warn("Não há canais habilitados para o usuário ID: {}", payload.getUserId());
             return;
@@ -64,14 +86,18 @@ public class NotificationStrategyServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Versão simplificada que envia apenas por WebSocket.
-     * Usado como fallback ou para retrocompatibilidade.
-     */
+    @Override
     public void sendWebNotification(NotificationPayload payload) {
         if (notificationStrategies.isEmpty()) {
             initStrategies();
         }
-        webSocketStrategy.sendNotificationToUser(payload);
+
+        NotificationService webService = notificationStrategies.get(NotificationChannelsEnum.WEB);
+        if (webService != null) {
+            webService.sendNotificationToUser(payload);
+            log.info("Fallback notification sent through WebSocket for user ID: {}", payload.getUserId());
+        } else {
+            log.error("WebSocket service unavailable for fallback notification to user ID: {}", payload.getUserId());
+        }
     }
 }

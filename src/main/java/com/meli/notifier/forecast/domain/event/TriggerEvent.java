@@ -9,10 +9,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Evento publicado quando um trigger de cron é acionado pelo Quartz.
- * Contém informações mínimas para processamento pelo consumer.
- */
 @Data
 @Builder
 @NoArgsConstructor

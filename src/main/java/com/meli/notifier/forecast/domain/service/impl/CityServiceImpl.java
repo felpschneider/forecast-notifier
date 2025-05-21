@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.CityEntity;
-import com.meli.notifier.forecast.adapter.persistence.repository.CityRepository;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.CityEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.repository.CityRepository;
 import com.meli.notifier.forecast.domain.mapper.CityMapper;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.service.CityService;

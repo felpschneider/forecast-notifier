@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.config;
 
-import com.meli.notifier.forecast.adapter.persistence.repository.SessionRepository;
+import com.meli.notifier.forecast.adapter.out.persistence.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

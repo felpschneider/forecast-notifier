@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.persistence.entity.SubscriptionEntity;
+import com.meli.notifier.forecast.adapter.out.persistence.entity.SubscriptionEntity;
 import com.meli.notifier.forecast.application.dto.request.SubscriptionRequestDTO;
 import com.meli.notifier.forecast.domain.model.database.Subscription;
 import com.meli.notifier.forecast.domain.model.database.User;

@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.application.mapper;
 
-import com.meli.notifier.forecast.adapter.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.integration.model.weather.ForecastResponseDTO;
+import com.meli.notifier.forecast.adapter.out.messaging.integration.model.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.adapter.out.messaging.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
 import com.meli.notifier.forecast.domain.model.forecast.WaveForecastWrapper;
 import com.meli.notifier.forecast.domain.model.forecast.WeatherForecastWrapper;

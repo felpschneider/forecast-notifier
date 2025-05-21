@@ -1,8 +1,8 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.integration.client.CptecFeignClient;
-import com.meli.notifier.forecast.adapter.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.integration.model.weather.ForecastResponseDTO;
+import com.meli.notifier.forecast.adapter.out.messaging.integration.client.CptecFeignClient;
+import com.meli.notifier.forecast.adapter.out.messaging.integration.model.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.adapter.out.messaging.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.application.mapper.ForecastMapper;
 import com.meli.notifier.forecast.domain.exception.ServiceUnavailableException;
 import com.meli.notifier.forecast.domain.mapper.CityMapper;
