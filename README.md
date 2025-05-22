@@ -163,8 +163,6 @@ Para autenticar, adicione o header na conexão:
 ```
 Authorization: Bearer <jwt-token>
 ```
-[Espaço para screenshot do Postman WebSocket]
-
 ## Estrutura do Projeto
 
 A aplicação segue uma estrutura baseada em arquitetura hexagonal:
