@@ -76,11 +76,12 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
                 );
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(payload)));
                 log.debug("Notification sent to user: {}", userId);
+                return;
             } catch (IOException e) {
                 log.error("Error sending notification to user: {}", userId, e);
             }
-        } else {
-            log.warn("No active WebSocket session found for user: {}", userId);
         }
+        log.warn("No active WebSocket session found for user: {}", userId);
+
     }
 }

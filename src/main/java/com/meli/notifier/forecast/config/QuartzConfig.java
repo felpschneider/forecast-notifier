@@ -32,13 +32,13 @@ public class QuartzConfig {
                                                  @Qualifier("quartzProperties") Properties quartzProps) {
 
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
-        factory.setDataSource(dataSource); // datasource do PostgreSQL
+        factory.setDataSource(dataSource);
         factory.setQuartzProperties(quartzProps);
-        factory.setJobFactory(jobFactory); // permite injeção de dependências
-        factory.setStartupDelay(10); // espera 10s após boot para iniciar
+        factory.setJobFactory(jobFactory);
+        factory.setStartupDelay(10);
         factory.setApplicationContextSchedulerContextKey("springContext");
-        factory.setWaitForJobsToCompleteOnShutdown(true); // aguarda jobs terminarem no shutdown
-        factory.setOverwriteExistingJobs(false); // não sobrescreve jobs existentes
+        factory.setWaitForJobsToCompleteOnShutdown(true);
+        factory.setOverwriteExistingJobs(false);
         return factory;
     }
 

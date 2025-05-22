@@ -1,8 +1,8 @@
 package com.meli.notifier.forecast.config.filter;
 
 import com.meli.notifier.forecast.domain.model.database.User;
-import com.meli.notifier.forecast.domain.service.SessionService;
-import com.meli.notifier.forecast.domain.service.UserService;
+import com.meli.notifier.forecast.application.port.in.SessionService;
+import com.meli.notifier.forecast.application.port.in.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

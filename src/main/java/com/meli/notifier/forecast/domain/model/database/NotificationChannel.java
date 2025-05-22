@@ -15,9 +15,9 @@ public class NotificationChannel {
     private Long id;
     private User user;
     private Boolean webOptIn;
-    private Boolean email_opt_in;
-    private Boolean sms_opt_in;
-    private Boolean push_opt_in;
+    private Boolean emailOptIn;
+    private Boolean smsOptIn;
+    private Boolean pushOptIn;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

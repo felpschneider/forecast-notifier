@@ -2,7 +2,7 @@ package com.meli.notifier.forecast.adapter.in.consumer;
 
 import com.meli.notifier.forecast.config.KafkaTopicConfig;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
-import com.meli.notifier.forecast.domain.service.NotificationStrategyService;
+import com.meli.notifier.forecast.application.port.in.NotificationStrategyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

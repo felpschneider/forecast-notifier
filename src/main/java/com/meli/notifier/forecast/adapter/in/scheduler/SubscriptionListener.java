@@ -18,14 +18,14 @@ public class SubscriptionListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSubscriptionSaved(SubscriptionEvent.SubscriptionSaved event) {
         Subscription subscription = event.getSubscription();
-        log.info("Recebido evento de subscrição salva para o ID: {}", subscription.getId());
+        log.info("Subscription event received for sub id: {}", subscription.getId());
         schedulerService.scheduleOrUpdateJob(subscription);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSubscriptionDeleted(SubscriptionEvent.SubscriptionDeleted event) {
         Long subscriptionId = event.getSubscriptionId();
-        log.info("Recebido evento de subscrição excluída para o ID: {}", subscriptionId);
+        log.info("Subscription delete event received for sub id {}", subscriptionId);
         schedulerService.deleteJob(subscriptionId);
     }
 }

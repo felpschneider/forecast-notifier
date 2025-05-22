@@ -2,12 +2,11 @@ package com.meli.notifier.forecast.adapter.in.controller.web;
 
 import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
 import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
+import com.meli.notifier.forecast.application.port.in.CityService;
+import com.meli.notifier.forecast.application.port.in.CptecService;
 import com.meli.notifier.forecast.domain.dto.response.CityResponseDTO;
-import com.meli.notifier.forecast.domain.mapper.ForecastMapper;
 import com.meli.notifier.forecast.domain.mapper.CityMapper;
-import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
-import com.meli.notifier.forecast.domain.service.CityService;
-import com.meli.notifier.forecast.domain.service.CptecService;
+import com.meli.notifier.forecast.domain.mapper.ForecastMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -69,7 +68,7 @@ public class CptecController {
             description = "Get waves forecast for a specific day for a city")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Wave forecast retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = CombinedForecastDTO.class))),
+                    content = @Content(schema = @Schema(implementation = WaveForecastResponseDTO.class))),
             @ApiResponse(responseCode = "503", description = "CPTEC API is unavailable")
     })
     @GetMapping("/{idCptec}/day/{day}/waves")

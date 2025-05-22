@@ -14,6 +14,9 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
 
     List<SubscriptionEntity> findAllByActiveIsTrue();
 
+    @Query(value = "SELECT s FROM SubscriptionEntity s WHERE s.active = true ORDER BY s.id LIMIT :limit OFFSET :offset")
+    List<SubscriptionEntity> findAllByActiveIsTrueWithPagination(@Param("offset") int offset, @Param("limit") int limit);
+
     @Query("SELECT s FROM SubscriptionEntity s WHERE s.user.id = :userId")
     List<SubscriptionEntity> findAllByUserId(@Param("userId") Long userId);
 

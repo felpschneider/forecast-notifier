@@ -3,9 +3,9 @@ package com.meli.notifier.forecast.adapter.in.scheduler;
 import com.meli.notifier.forecast.domain.model.database.Subscription;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
-import com.meli.notifier.forecast.domain.service.SubscriptionService;
-import com.meli.notifier.forecast.domain.service.impl.CptecServiceImpl;
-import com.meli.notifier.forecast.port.out.EventPublisherPort;
+import com.meli.notifier.forecast.application.port.in.SubscriptionService;
+import com.meli.notifier.forecast.application.service.CptecServiceImpl;
+import com.meli.notifier.forecast.application.port.out.EventPublisherPort;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
@@ -36,13 +36,13 @@ public class NotificationJob implements Job {
             Long subscriptionId = dataMap.getLong("subscriptionId");
             log.info("Executing notification job for subscription ID: {}", subscriptionId);
             
-            Optional<Subscription> subscriptionOpt = subscriptionService.findById(subscriptionId);
+            Optional<Subscription> subscriptionOpt = subscriptionService.findByIdAndActiveTrue(subscriptionId);
             if (subscriptionOpt.isEmpty()) {
                 throw new JobExecutionException("Subscription not found: " + subscriptionId);
             }
             
             Subscription subscription = subscriptionOpt.get();
-            
+
             Long cityId = subscription.getCity().getIdCptec();
             CombinedForecastDTO forecast = cptecService.getCombinedForecast(cityId);
             

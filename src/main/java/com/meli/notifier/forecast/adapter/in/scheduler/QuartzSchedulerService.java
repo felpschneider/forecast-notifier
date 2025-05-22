@@ -1,10 +1,11 @@
 package com.meli.notifier.forecast.adapter.in.scheduler;
 
+import com.meli.notifier.forecast.application.port.in.SubscriptionService;
 import com.meli.notifier.forecast.domain.model.database.Subscription;
-import com.meli.notifier.forecast.domain.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -20,25 +21,35 @@ public class QuartzSchedulerService {
     private final SubscriptionService subscriptionService;
 
     private static final String SUBSCRIPTION_ID_KEY = "subscriptionId";
-    private static final String JOB_GROUP = "subscription-jobs";
-    private static final String TRIGGER_GROUP = "subscription-triggers";
+    private static final int BATCH_SIZE = 100;
+
+    @Value("${spring.application.instance-id:${random.uuid}}")
+    private String instanceId;
 
     @EventListener(ApplicationReadyEvent.class)
     public void scheduleAllActiveSubscriptions() {
         try {
-            log.info("Iniciando agendamento de todas as subscrições ativas");
-            List<Subscription> activeSubscriptions = subscriptionService
-                    .findAllByActiveIsTrue();
+            log.info("Starting to schedule active subscriptions on instance {}", instanceId);
 
-            log.info("Encontradas {} subscrições ativas para agendar", activeSubscriptions.size());
+            int offset = 0;
+            boolean hasMoreSubscriptions = true;
 
-            for (Subscription subscription : activeSubscriptions) {
-                scheduleOrUpdateJob(subscription);
+            while (hasMoreSubscriptions) {
+                List<Subscription> batch = subscriptionService.findActiveSubscriptionsWithPagination(offset, BATCH_SIZE);
+                log.info("Processing batch of {} active subscriptions, offset {}", batch.size(), offset);
+
+                for (Subscription subscription : batch) {
+                    scheduleOrUpdateJob(subscription);
+                }
+
+                offset += batch.size();
+
+                hasMoreSubscriptions = !batch.isEmpty() && batch.size() == BATCH_SIZE;
             }
 
-            log.info("Agendamento inicial de subscrições concluído");
+            log.info("Initial subscription scheduling completed on instance {}", instanceId);
         } catch (Exception e) {
-            log.error("Erro ao agendar subscrições ativas durante o startup", e);
+            log.error("Error scheduling active subscriptions during startup", e);
         }
     }
 
@@ -46,7 +57,7 @@ public class QuartzSchedulerService {
         try {
             if (!subscription.getActive()) {
                 deleteJob(subscription.getId());
-                log.info("Subscrição {} está inativa, job removido", subscription.getId());
+                log.info("Subscription {} is inactive, job removed", subscription.getId());
                 return;
             }
 
@@ -55,33 +66,32 @@ public class QuartzSchedulerService {
 
             if (scheduler.checkExists(jobDetail.getKey())) {
                 scheduler.rescheduleJob(trigger.getKey(), trigger);
-                log.info("Job existente atualizado para a subscrição ID: {}",
+                log.info("Existing job updated for subscription ID: {}",
                         subscription.getId());
             }
 
             scheduler.scheduleJob(jobDetail, trigger);
-            log.info("Novo job agendado para a subscrição ID: {}", subscription.getId());
+            log.info("New job scheduled for subscription ID: {}", subscription.getId());
         } catch (SchedulerException e) {
-            log.error("Erro ao agendar job para a subscrição ID: {}", subscription.getId(), e);
+            log.error("Error scheduling job for subscription ID: {}", subscription.getId(), e);
         }
     }
 
     public void deleteJob(Long subscriptionId) {
         try {
-            JobKey jobKey = new JobKey("sub-" + subscriptionId, JOB_GROUP);
+            JobKey jobKey = new JobKey("sub-" + subscriptionId);
             if (scheduler.checkExists(jobKey)) {
                 scheduler.deleteJob(jobKey);
-                log.info("Job removido para a subscrição ID: {}", subscriptionId);
+                log.info("Job removed for subscription ID: {}", subscriptionId);
             }
         } catch (SchedulerException e) {
-            log.error("Erro ao remover job para a subscrição ID: {}",
-                    subscriptionId, e);
+            log.error("Error removing job for subscription ID: {}", subscriptionId, e);
         }
     }
 
     private JobDetail buildJobDetail(Subscription subscription) {
         return JobBuilder.newJob(NotificationJob.class)
-                .withIdentity("sub-" + subscription.getId(), JOB_GROUP)
+                .withIdentity("sub-" + subscription.getId())
                 .usingJobData(SUBSCRIPTION_ID_KEY, subscription.getId())
                 .storeDurably()
                 .build();
@@ -89,7 +99,7 @@ public class QuartzSchedulerService {
 
     private CronTrigger buildCronTrigger(Subscription subscription) {
         return TriggerBuilder.newTrigger()
-                .withIdentity("sub-" + subscription.getId(), TRIGGER_GROUP)
+                .withIdentity("sub-" + subscription.getId())
                 .withSchedule(CronScheduleBuilder.cronSchedule(subscription.getCronExpression())
                         .withMisfireHandlingInstructionFireAndProceed())
                 .build();
