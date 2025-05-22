@@ -8,7 +8,6 @@ import com.meli.notifier.forecast.domain.model.database.City;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
@@ -16,9 +15,6 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {SubscriptionMapper.class})
 public interface CityMapper {
-
-    CityMapper INSTANCE = Mappers.getMapper(CityMapper.class);
-
     City toModel(CityEntity entity);
 
     CityEntity toEntity(City model);
