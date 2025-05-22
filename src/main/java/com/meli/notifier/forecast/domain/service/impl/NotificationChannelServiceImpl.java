@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.NotificationChannelEntity;
+import com.meli.notifier.forecast.domain.entity.NotificationChannelEntity;
 import com.meli.notifier.forecast.domain.mapper.NotificationChannelMapper;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
 import com.meli.notifier.forecast.domain.service.NotificationChannelService;
@@ -23,7 +23,7 @@ public class NotificationChannelServiceImpl implements NotificationChannelServic
     @Override
     @Transactional(readOnly = true)
     public Optional<NotificationChannel> getNotificationChannelByUserId(Long userId) {
-        log.debug("Buscando preferências de canais de notificação para o usuário ID: {}", userId);
+        log.debug("Searching for notification channels user id {} opted in", userId);
         return notificationChannelRepository.findByUserId(userId)
                 .map(notificationChannelMapper::toModel);
     }
@@ -31,7 +31,7 @@ public class NotificationChannelServiceImpl implements NotificationChannelServic
     @Override
     @Transactional
     public NotificationChannel saveNotificationChannel(NotificationChannel notificationChannel) {
-        log.debug("Salvando preferências de canais de notificação para o usuário ID: {}",
+        log.debug("Saving notification channel : {}",
                   notificationChannel.getUser() != null ? notificationChannel.getUser().getId() : null);
 
         NotificationChannelEntity entity = notificationChannelMapper.toEntity(notificationChannel);

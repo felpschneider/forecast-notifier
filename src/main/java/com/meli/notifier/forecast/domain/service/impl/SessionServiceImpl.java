@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.SessionEntity;
-import com.meli.notifier.forecast.adapter.out.persistence.entity.UserEntity;
+import com.meli.notifier.forecast.domain.entity.SessionEntity;
+import com.meli.notifier.forecast.domain.entity.UserEntity;
 import com.meli.notifier.forecast.adapter.out.persistence.repository.SessionRepository;
-import com.meli.notifier.forecast.application.dto.TokenDTO;
+import com.meli.notifier.forecast.domain.dto.TokenDTO;
 import com.meli.notifier.forecast.domain.mapper.SessionMapper;
 import com.meli.notifier.forecast.domain.model.database.Session;
 import com.meli.notifier.forecast.domain.service.SessionService;

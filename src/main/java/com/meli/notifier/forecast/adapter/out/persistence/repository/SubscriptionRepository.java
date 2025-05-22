@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.adapter.out.persistence.repository;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.SubscriptionEntity;
+import com.meli.notifier.forecast.domain.entity.SubscriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +27,6 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
     List<SubscriptionEntity> findActiveByUserId(@Param("userId") Long userId);
 
     Optional<SubscriptionEntity> findByUserIdAndCityIdCptec(Long id, Long cityId);
+
+    Optional<SubscriptionEntity> findByIdAndActiveTrue(Long id);
 }

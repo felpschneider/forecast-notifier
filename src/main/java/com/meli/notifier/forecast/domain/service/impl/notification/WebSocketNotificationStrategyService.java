@@ -3,9 +3,8 @@ package com.meli.notifier.forecast.domain.service.impl.notification;
 import com.meli.notifier.forecast.config.NotificationWebSocketHandler;
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
-import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.domain.service.NotificationService;
-import com.meli.notifier.forecast.domain.service.impl.NotificationCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class WebSocketNotificationStrategyService implements NotificationService {
 
     private final NotificationWebSocketHandler webSocketHandler;
-    private final NotificationCacheService notificationCacheService;
 
     @Override
     public void sendNotificationToUser(NotificationPayload notification) {

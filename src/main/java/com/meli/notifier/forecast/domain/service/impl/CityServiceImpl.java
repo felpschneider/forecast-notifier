@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.CityEntity;
+import com.meli.notifier.forecast.domain.entity.CityEntity;
 import com.meli.notifier.forecast.adapter.out.persistence.repository.CityRepository;
 import com.meli.notifier.forecast.domain.mapper.CityMapper;
 import com.meli.notifier.forecast.domain.model.database.City;
@@ -24,43 +24,43 @@ public class CityServiceImpl implements CityService {
     @Override
     public List<City> findCities(String cityName) {
         log.info("Finding cities with name: {}", cityName);
-        return cityRepository.findCityEntitiesByName(cityName).stream().map(cityMapper::toModel).toList();
+        return cityRepository.findCityEntitiesByNameIgnoreCase(cityName)
+                .stream()
+                .map(cityMapper::toModel)
+                .toList();
     }
 
     @Transactional
     @Override
     public List<City> saveCitiesToDatabase(List<City> cities) {
-        log.info("Saving cities to database: {}", cities.size());
-        for (City city : cities) {
-            if (cityRepository.findById(city.getIdCptec()).isPresent()) {
-                log.debug("City already exists in database: {}", city.getName());
-                continue;
-            }
-
-            saveCity(city);
-        }
-        return cities;
+        log.info("Starting batch save operation for {} cities", cities.size());
+        return cities.stream()
+                .map(this::saveIfNotExists)
+                .toList();
     }
 
     @Transactional
     @Override
-    public void saveCity(City city) {
+    public City saveCity(City city) {
         log.info("Saving city to database: {}", city.getName());
         CityEntity cityEntity = cityMapper.toEntity(city);
-        cityRepository.save(cityEntity);
-        log.debug("City saved to database: {}", city.getName());
-    }
-
-    @Transactional
-    @Override
-    public void saveCity(Long id) {
-        findById(id).ifPresent(this::saveCity);
+        var savedEntity = cityRepository.save(cityEntity);
+        log.debug("City successfully saved to database: {}", city.getName());
+        return cityMapper.toModel(savedEntity);
     }
 
     @Override
     public Optional<City> findById(Long cityId) {
         log.info("Finding city by ID: {}", cityId);
-        return cityRepository.findById(cityId).map(cityMapper::toModel);
+        return cityRepository.findById(cityId)
+                .map(cityMapper::toModel);
     }
 
+    private City saveIfNotExists(City city) {
+        return findById(city.getIdCptec())
+                .orElseGet(() -> {
+                    log.debug("City {} not found in database, saving...", city.getName());
+                    return saveCity(city);
+                });
+    }
 }

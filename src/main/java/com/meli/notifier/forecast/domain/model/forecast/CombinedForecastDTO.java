@@ -17,7 +17,6 @@ public class CombinedForecastDTO {
     private WeatherForecastWrapper weatherForecast;
     private WaveForecastWrapper waveForecast;
     
-    // Additional fields for simplified representation
     private Double temperature;
     private WeatherCondition condition;
     private List<DailyForecastDTO> forecasts;

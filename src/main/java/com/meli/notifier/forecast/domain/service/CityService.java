@@ -10,9 +10,7 @@ public interface CityService {
 
     List<City> saveCitiesToDatabase(List<City> cities);
 
-    void saveCity(City city);
-
-    void saveCity(Long id);
+    City saveCity(City city);
 
     Optional<City> findById(Long cityId);
 }

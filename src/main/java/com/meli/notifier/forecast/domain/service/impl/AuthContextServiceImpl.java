@@ -1,7 +1,6 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
 import com.meli.notifier.forecast.domain.exception.AuthenticationException;
-import com.meli.notifier.forecast.domain.mapper.UserMapper;
 import com.meli.notifier.forecast.domain.model.database.User;
 import com.meli.notifier.forecast.domain.service.AuthContextService;
 import com.meli.notifier.forecast.domain.service.UserService;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class AuthContextServiceImpl implements AuthContextService {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Override
     public User getCurrentUser() {

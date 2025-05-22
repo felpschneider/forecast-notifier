@@ -2,7 +2,7 @@ package com.meli.notifier.forecast.domain.service.impl.notification;
 
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
-import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.domain.service.NotificationChannelService;
 import com.meli.notifier.forecast.domain.service.NotificationService;
 import com.meli.notifier.forecast.domain.service.NotificationStrategyService;

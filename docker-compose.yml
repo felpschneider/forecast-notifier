@@ -55,6 +55,5 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  zookeeper_data:
   kafka_data:
 

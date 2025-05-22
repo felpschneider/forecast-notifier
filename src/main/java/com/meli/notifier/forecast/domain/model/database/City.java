@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Builder
@@ -20,7 +18,4 @@ public class City {
     private Boolean isCoastal;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @Builder.Default
-    private Set<Subscription> subscriptions = new HashSet<>();
 }

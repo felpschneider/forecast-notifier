@@ -12,7 +12,7 @@ public class KafkaTopicConfig {
     private static final int DEFAULT_PARTITION_COUNT = 6;
 
     @Bean
-    public NewTopic notificationOutboundTopic() {
+    public NewTopic notificationTopic() {
         return TopicBuilder.name(NOTIFICATION_TOPIC)
                 .partitions(DEFAULT_PARTITION_COUNT)
                 .replicas(1)

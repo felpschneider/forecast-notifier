@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.adapter.out.messaging;
 
 import com.meli.notifier.forecast.config.KafkaTopicConfig;
-import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.port.out.EventPublisherPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +20,6 @@ public class KafkaEventProducer implements EventPublisherPort {
         try {
             kafkaTemplate.send(KafkaTopicConfig.NOTIFICATION_TOPIC, userId, payload)
                     .whenComplete((result, ex) -> {
-                        if (ex == null) {
-                            log.debug("Notificação enviada para Kafka: userId={}, offset={}", userId, result.getRecordMetadata().offset());
-                        } else {
-                            log.error("Erro ao enviar notificação para Kafka: userId={}", userId, ex);
-                        }
                     });
             log.info("Notificação publicada com sucesso para Kafka: userId={}", userId);
         } catch (Exception e) {

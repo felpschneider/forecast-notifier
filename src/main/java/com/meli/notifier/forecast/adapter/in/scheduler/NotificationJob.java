@@ -2,11 +2,10 @@ package com.meli.notifier.forecast.adapter.in.scheduler;
 
 import com.meli.notifier.forecast.domain.model.database.Subscription;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
-import com.meli.notifier.forecast.domain.model.websocket.NotificationPayload;
+import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.domain.service.SubscriptionService;
 import com.meli.notifier.forecast.domain.service.impl.CptecServiceImpl;
 import com.meli.notifier.forecast.port.out.EventPublisherPort;
-import com.meli.notifier.forecast.domain.service.impl.NotificationCacheService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
@@ -29,8 +28,6 @@ public class NotificationJob implements Job {
     private CptecServiceImpl cptecService;
     @Autowired
     private EventPublisherPort eventPublisher;
-    @Autowired
-    private NotificationCacheService notificationCacheService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -45,11 +42,6 @@ public class NotificationJob implements Job {
             }
             
             Subscription subscription = subscriptionOpt.get();
-            
-            if (!subscription.getActive()) {
-                log.info("Subscription {} is inactive, skipping notification check", subscriptionId);
-                return;
-            }
             
             Long cityId = subscription.getCity().getIdCptec();
             CombinedForecastDTO forecast = cptecService.getCombinedForecast(cityId);

@@ -1,8 +1,9 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.out.messaging.integration.model.city.CityResponseCptecDTO;
-import com.meli.notifier.forecast.adapter.out.persistence.entity.CityEntity;
-import com.meli.notifier.forecast.application.dto.response.CityResponseDTO;
+import com.meli.notifier.forecast.adapter.out.integration.model.city.CityResponseCptecDTO;
+import com.meli.notifier.forecast.domain.entity.CityEntity;
+import com.meli.notifier.forecast.domain.dto.request.CityRequestDTO;
+import com.meli.notifier.forecast.domain.dto.response.CityResponseDTO;
 import com.meli.notifier.forecast.domain.model.database.City;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,14 +21,16 @@ public interface CityMapper {
 
     City toModel(CityEntity entity);
 
-    CityEntity toEntity(City model);    CityResponseDTO toResponseDTO(City entity);
+    CityEntity toEntity(City model);
 
-    CityResponseDTO toResponseDTO(CityEntity entity);
+    CityResponseDTO toDTO(City model);
 
-    List<CityResponseDTO> toResponseDTOs(List<City> entities);
+    CityResponseDTO toDTO(CityEntity entity);
 
     @Mapping(target = "idCptec", source = "id")
     City toModel(CityResponseCptecDTO dto);
 
     List<City> toModel(List<CityResponseCptecDTO> dto);
+
+    City toModel(CityRequestDTO dto);
 }

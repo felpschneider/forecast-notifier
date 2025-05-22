@@ -1,8 +1,8 @@
 package com.meli.notifier.forecast.adapter.in.controller.web;
 
-import com.meli.notifier.forecast.application.dto.TokenDTO;
-import com.meli.notifier.forecast.application.dto.request.LoginRequestDTO;
-import com.meli.notifier.forecast.application.dto.request.RegisterRequestDTO;
+import com.meli.notifier.forecast.domain.dto.TokenDTO;
+import com.meli.notifier.forecast.domain.dto.request.LoginRequestDTO;
+import com.meli.notifier.forecast.domain.dto.request.RegisterRequestDTO;
 import com.meli.notifier.forecast.domain.mapper.UserMapper;
 import com.meli.notifier.forecast.domain.service.AuthService;
 import com.meli.notifier.forecast.domain.service.UserService;

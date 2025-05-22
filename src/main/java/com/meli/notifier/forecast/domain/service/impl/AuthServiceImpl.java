@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.domain.service.impl;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.UserEntity;
+import com.meli.notifier.forecast.domain.entity.UserEntity;
 import com.meli.notifier.forecast.adapter.out.persistence.repository.UserRepository;
-import com.meli.notifier.forecast.application.dto.TokenDTO;
-import com.meli.notifier.forecast.application.dto.request.LoginRequestDTO;
+import com.meli.notifier.forecast.domain.dto.TokenDTO;
+import com.meli.notifier.forecast.domain.dto.request.LoginRequestDTO;
 import com.meli.notifier.forecast.domain.exception.AuthenticationException;
 import com.meli.notifier.forecast.domain.service.AuthService;
 import com.meli.notifier.forecast.domain.service.SessionService;

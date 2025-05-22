@@ -1,5 +1,7 @@
 package com.meli.notifier.forecast.domain.service;
 
+import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
 
@@ -7,7 +9,11 @@ import java.util.List;
 
 public interface CptecService {
 
+    List<City> findCities(String cityName);
+
     CombinedForecastDTO getCombinedForecast(Long cityId);
 
-    List<City> findCities(String cityName);
+    ForecastResponseDTO getWeatherForecast(Long cityId);
+
+    WaveForecastResponseDTO getWaveForecast(Long cityId, int day);
 }

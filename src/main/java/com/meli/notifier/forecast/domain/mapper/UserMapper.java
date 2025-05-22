@@ -1,7 +1,8 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.UserEntity;
-import com.meli.notifier.forecast.application.dto.request.RegisterRequestDTO;
+import com.meli.notifier.forecast.domain.entity.UserEntity;
+import com.meli.notifier.forecast.domain.dto.request.RegisterRequestDTO;
+import com.meli.notifier.forecast.domain.dto.response.UserResponseDTO;
 import com.meli.notifier.forecast.domain.model.database.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,5 +22,7 @@ public interface UserMapper {
 
     UserEntity toEntity(User model);
 
+    UserResponseDTO toDTO(User model);
 
+    User toModel(UserResponseDTO dto);
 }
