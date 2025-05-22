@@ -68,7 +68,7 @@ spring:
       properties:
         acks: all
         retries: 3
-        retry.backoff.ms: 1000
+        retry.backoff.ms: 2000
         enable.idempotence: true
     consumer:
       group-id: forecast-notifier-group

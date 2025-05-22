@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.adapter.out.persistence.repository;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.SubscriptionEntity;
+import com.meli.notifier.forecast.domain.entity.SubscriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +14,9 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
 
     List<SubscriptionEntity> findAllByActiveIsTrue();
 
+    @Query(value = "SELECT s FROM SubscriptionEntity s WHERE s.active = true ORDER BY s.id LIMIT :limit OFFSET :offset")
+    List<SubscriptionEntity> findAllByActiveIsTrueWithPagination(@Param("offset") int offset, @Param("limit") int limit);
+
     @Query("SELECT s FROM SubscriptionEntity s WHERE s.user.id = :userId")
     List<SubscriptionEntity> findAllByUserId(@Param("userId") Long userId);
 
@@ -25,4 +28,8 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
 
     @Query("SELECT s FROM SubscriptionEntity s WHERE s.user.id = :userId AND s.active = true")
     List<SubscriptionEntity> findActiveByUserId(@Param("userId") Long userId);
+
+    Optional<SubscriptionEntity> findByUserIdAndCityIdCptec(Long id, Long cityId);
+
+    Optional<SubscriptionEntity> findByIdAndActiveTrue(Long id);
 }

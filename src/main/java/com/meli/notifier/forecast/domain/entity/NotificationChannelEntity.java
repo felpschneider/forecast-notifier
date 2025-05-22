@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.out.persistence.entity;
+package com.meli.notifier.forecast.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,34 +11,32 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "notification_channels")
 @Data
-@Builder(toBuilder = true)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class NotificationChannelEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
-    @Column(unique = true)
-    private String email;
+    @Column(name = "web_opt_in", nullable = false)
+    private Boolean webOptIn;
 
-    @Column(name = "phone_number", unique = true)
-    private String phoneNumber;
+    @Column(name = "email_opt_in", nullable = false)
+    private Boolean emailOptIn;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(name = "sms_opt_in", nullable = false)
+    private Boolean smsOptIn;
 
-    @Column(name = "opt_in", nullable = false)
-    private Boolean optIn;
-
-    @Column(nullable = false)
-    private Boolean active;
+    @Column(name = "push_opt_in", nullable = false)
+    private Boolean pushOptIn;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
