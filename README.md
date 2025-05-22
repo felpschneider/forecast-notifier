@@ -17,7 +17,7 @@ explicação clara da **arquitetura proposta** e **racional por trás das escolh
 
 Abaixo está o diagrama da arquitetura proposta para resolver o desafio:
 
-![Diagrama Arquitetura](src/main/resources/docs/High level diagram.png)
+![diagrama arquitetura](https://github.com/user-attachments/assets/c1a803e3-bb44-4006-a295-4b45c25608bc)
 
 ---
 
