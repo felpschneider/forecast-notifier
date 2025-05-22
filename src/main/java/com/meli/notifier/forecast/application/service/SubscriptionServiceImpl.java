@@ -54,10 +54,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .build();
 
         SubscriptionEntity savedEntity = subscriptionRepository.save(subscriptionMapper.toEntity(subscription));
-        eventPublisher.publishEvent(new SubscriptionEvent.SubscriptionSaved(subscriptionMapper.toModel(savedEntity)));
+        Subscription sub = subscriptionMapper.toModel(savedEntity);
+        eventPublisher.publishEvent(new SubscriptionEvent.SubscriptionSaved(sub));
 
         log.info("Subscription created successfully with id: {}", savedEntity.getId());
-        return subscriptionMapper.toModel(savedEntity);
+        return sub;
     }
 
     private City fetchCity(Subscription request) {
