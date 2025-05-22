@@ -1,6 +1,6 @@
-# Notificador de Previsão do Tempo
+# 🌤️ Notificador de Previsão do Tempo
 
-## Visão Geral
+## 👀 Visão Geral
 
 Este projeto foi desenvolvido com o objetivo de criar um sistema de notificações de previsão do tempo para usuários,
 consumindo dados do CPTEC (Centro de Previsão de Tempo e Estudos Climáticos).
@@ -8,43 +8,47 @@ consumindo dados do CPTEC (Centro de Previsão de Tempo e Estudos Climáticos).
 O sistema permite que usuários se cadastrem e assinem notificações sobre previsões do tempo para cidades específicas,
 com agendamentos personalizados. Para cidades litorâneas, o sistema também fornece informações sobre ondas.
 
-## Diagrama de Arquitetura
+Perfeito! Com base no seu novo diagrama, aqui está um trecho de **README** para incluir no seu repositório, com uma
+explicação clara da **arquitetura proposta** e **racional por trás das escolhas**. Está em português, como solicitado:
 
-### Diagrama de Alto Nível
+---
 
-[Espaço para inserir diagrama de arquitetura]
+## 🧠 Arquitetura da Solução
 
-### Fluxo de Dados
+Abaixo está o diagrama da arquitetura proposta para resolver o desafio:
 
-[Espaço para inserir diagrama de fluxo de dados]
+![Diagrama Arquitetura](src/main/resources/docs/High level diagram.png)
+
+---
+
+### 🧭 Como cheguei nessa arquitetura
+
+A arquitetura foi desenhada com foco em suprir os requisitos funcionais e não-funcionais. Cada componente é essencial
+para garantir a escalabilidade, resiliência e facilidade de manutenção do sistema.
+
+Abaixo está uma tabela com os principais componentes da arquitetura e o motivo da escolha:
+
+| Componente               | Função                                                                                                                                                                                                                                                                                                                        |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **WAF**                  | Protege a aplicação contra ataques conhecidos (ex: SQLi, XSS, DDoS).                                                                                                                                                                                                                                                          |
+| **API Gateway**          | Roteia chamadas para o serviço correto. Essencial, apesar de não implementado, seria essencial em produção ao escalar o serviço horizontalmente.                                                                                                                                                                              |
+| **Frontend**             | Aplicação web que consome a API REST e WebSocket. Especialmente sobre WebSocket, pelo sistema ser algo que necessite de uma constante comunicação Servidor-->Cliente, e em vista da possibilidade de implementar uma comunicação também do Cliente-->Servidor, escolhi por utilizar essa tecnologia para simular o front-end. |
+| **Server Backend**       | Monolito em Spring Boot que concentra regras de negócio, scheduler, consumo da API CPTEC e publica as notificações. Feito na arquitetura hexagonal para favorecer um menor acoplamento entre as partes e até mesmo o desmembramento do sistema em outro microsserviços.                                                       |
+| **CPTEC API**            | API necessária para buscar previsões meteorológicas e de ondas.                                                                                                                                                                                                                                                               |
+| **Message Queue**        | Kafka, usado para desacoplar o agendamento da entrega das notificações. A implementação dessa tecnologia, facilita a escalabilidade horizontal, e aumenta o throughput por ser uma ferramenta robusta de filas.                                                                                                               |
+| **Database**             | PostgreSQL foi utilizado por existir um relacionamento claro do usuário com os outros componentes do sistema, fora isso, por ser um banco de dados ACID, aumenta a confiabilidade e integridade do sistema.                                                                                                                   |
+| **Cache**                | Redis usado como cache de previsões. Essa ferramenta otimiza consultas repetidas que naturalmente são feitas a API's e até mesmo ao banco de dados, diminuindo a latência e favorecendo a escalabilidade.                                                                                                                     |
+| **Monitoramento & Logs** | Para monitorar e concentrar os logs e métricas em um só lugar, é interessante a exposição de endpoints que facilitem o troubleshooting e monitoramento. Além disso, futuramente, planejo adicionar ao sistema ferramentas como ELK ou Grafana.                                                                                |
 
 ## Tecnologias Utilizadas
 
 - **Backend**: Java 21 + Spring Boot 3.4
 - **Banco de Dados**: PostgreSQL
-- **Cache e Locks Distribuídos**: Redis
+- **Cache**: Redis
 - **Mensageria**: Apache Kafka
-- **Agendamento Distribuído**: Quartz Scheduler + ShedLock
+- **Agendamento Distribuído**: Quartz Scheduler
 - **Notificações Web**: WebSockets
 - **Containerização**: Docker e Docker Compose
-
-## Decisões Arquiteturais
-
-O sistema foi projetado para ser escalável e resiliente, seguindo princípios de arquitetura hexagonal (ports and
-adapters). Algumas decisões arquiteturais importantes:
-
-1. **Monolito Modular**: Inicialmente implementado como monolito, com fronteiras entre módulos, facilitando eventual
-   migração para microsserviços.
-
-2. **Cache Distribuído**: Uso de Redis para cache de dados do CPTEC.
-
-3. **Mensageria**: Apache Kafka para processamento assíncrono de notificações, garantindo escalabilidade e resiliência.
-
-4. **Agendamento Distribuído**: Quartz para garantir que jobs sejam executados apenas uma vez em ambiente distribuído.
-
-5. **Comunicação em Tempo Real**: WebSockets para entrega de notificações instantâneas aos usuários.
-
-6. **Design Patterns**: Uso do Strategy Pattern para permitir a fácil adição de novos canais de notificação no futuro.
 
 ## Como Executar
 
@@ -69,13 +73,20 @@ cd notifier-forecast
 docker-compose up -d
 ```
 
-A aplicação estará disponível em `http://localhost:8080`
+A aplicação estará disponível em `http://localhost:8080/api`
 
-## Fluxo de Uso
+## Documentação
+
+A documentação da API está disponível em `http://localhost:8080/api/docs`.
+
+## Endpoints
+
+Abaixo estão os principais endpoints da API, para acessar a documentação completa, consulte
+o [Swagger](http://localhost:8080/api/swagger-ui/index.html).
 
 ### 1. Registro de Usuário
 
-Endpoint: `POST /users/register`
+Endpoint: `POST /v1/auth/register`
 
 Exemplo de requisição:
 
@@ -88,11 +99,9 @@ Exemplo de requisição:
 }
 ```
 
-[Espaço para screenshot do Postman]
-
 ### 2. Login
 
-Endpoint: `POST /users/login`
+Endpoint: `POST /v1/auth/login`
 
 Exemplo de requisição:
 
@@ -107,16 +116,14 @@ Resposta:
 
 ```json
 {
-  "token": "jwt-token-here",
-  "expirationDate": "expiration"
+   "token": "generated-token-here",
+   "expiresAt": "timestamp"
 }
 ```
 
-[Espaço para screenshot do Postman]
-
 ### 3. Buscar Cidades
 
-Endpoint: `GET /cities/search?name=rio de janeiro`
+Endpoint: `GET /v1/cptec/cities/search?name=rio de janeiro`
 
 Resposta:
 
@@ -131,9 +138,7 @@ Resposta:
 ]
 ```
 
-[Espaço para screenshot do Postman]
-
-### 4. Criar Assinatura
+### 4. Criar Subscrição
 
 Endpoint: `POST /subscriptions`
 
@@ -141,18 +146,19 @@ Exemplo de requisição:
 
 ```json
 {
-  "cityId": 241, // Cidade do Rio de Janeiro
-  "cronExpression": "0 * * * * ?" // Roda a cada minuto
+   "city": {
+      "idCptec": 241,
+      "name": "Rio de Janeiro"
+   },
+   "cronExpression": "0 * * * * ?"
 }
 ```
 
-[Espaço para screenshot do Postman]
-
 ### 5. Conectar ao WebSocket
 
-URL: `ws://localhost:8080/ws`
+URL: `ws://localhost:8080/api/notifications`
 
-Para autenticar, adicione o header de conexão:
+Para autenticar, adicione o header na conexão:
 
 ```
 Authorization: Bearer <jwt-token>
