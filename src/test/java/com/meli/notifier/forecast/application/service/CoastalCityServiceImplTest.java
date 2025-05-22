@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.application.service;
 
 import com.meli.notifier.forecast.adapter.out.integration.client.CptecFeignClient;
-import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
 import com.meli.notifier.forecast.application.port.in.CityService;
 import com.meli.notifier.forecast.domain.model.database.City;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

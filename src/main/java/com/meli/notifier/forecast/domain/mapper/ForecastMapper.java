@@ -1,10 +1,10 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
 import com.meli.notifier.forecast.domain.model.forecast.WaveForecastWrapper;
 import com.meli.notifier.forecast.domain.model.forecast.WeatherForecastWrapper;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

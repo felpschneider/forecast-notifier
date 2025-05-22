@@ -52,9 +52,7 @@ public class NotificationJob implements Job {
                     .combinedForecast(forecast)
                     .build();
 
-            eventPublisher.publishNotification(
-                    String.valueOf(subscription.getUser().getId()),
-                    notification);
+            eventPublisher.publishNotification(String.valueOf(subscription.getUser().getId()), notification);
 
             log.info("Notification sent for subscription {}", subscriptionId);
         } catch (Exception e) {

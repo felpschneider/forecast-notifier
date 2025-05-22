@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.application.port.in;
+package com.meli.notifier.forecast.application.port.in.notification;
 
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
 

@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.adapter.in.consumer;
 
-import com.meli.notifier.forecast.application.port.in.NotificationStrategyService;
+import com.meli.notifier.forecast.application.port.in.notification.NotificationService;
 import com.meli.notifier.forecast.config.KafkaTopicConfig;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class NotificationConsumer {
 
-    private final NotificationStrategyService notificationStrategyService;
+    private final NotificationService notificationService;
 
     @KafkaListener(
             groupId = "${spring.kafka.consumer.group-id}",
@@ -29,7 +29,7 @@ public class NotificationConsumer {
                 payload.getUserId(), payload.getSubscriptionId());
 
         try {
-            notificationStrategyService.sendNotification(payload);
+            notificationService.sendNotification(payload);
             log.info("Notificação processada com sucesso para usuário ID: {}", payload.getUserId());
         } catch (Exception e) {
             log.error("Erro ao processar notificação para usuário ID: {}",

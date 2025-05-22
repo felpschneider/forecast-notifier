@@ -1,8 +1,6 @@
 package com.meli.notifier.forecast.application.service;
 
 import com.meli.notifier.forecast.adapter.out.integration.client.CptecFeignClient;
-import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.application.port.in.CityService;
 import com.meli.notifier.forecast.application.port.in.CoastalCityService;
 import com.meli.notifier.forecast.application.port.in.CptecService;
@@ -12,6 +10,8 @@ import com.meli.notifier.forecast.domain.mapper.CityMapper;
 import com.meli.notifier.forecast.domain.mapper.ForecastMapper;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastResponseDTO;
 import feign.FeignException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;

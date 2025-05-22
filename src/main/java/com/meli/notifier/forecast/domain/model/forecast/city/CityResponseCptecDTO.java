@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.out.integration.model.city;
+package com.meli.notifier.forecast.domain.model.forecast.city;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;

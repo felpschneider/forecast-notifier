@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.application.port.in;
 
-import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastResponseDTO;
 
 import java.util.List;
 

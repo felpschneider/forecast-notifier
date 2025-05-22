@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.domain.model.forecast;
 
-import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastDay;
+import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastDay;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
