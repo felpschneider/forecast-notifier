@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.adapter.out.persistence.repository;
 
-import com.meli.notifier.forecast.adapter.out.persistence.entity.SessionEntity;
+import com.meli.notifier.forecast.domain.entity.SessionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
