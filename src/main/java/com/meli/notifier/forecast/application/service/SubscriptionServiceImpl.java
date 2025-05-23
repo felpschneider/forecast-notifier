@@ -42,8 +42,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new ValidationException("City ID is required");
         }
 
+        if (user.getOptIn().equals(Boolean.FALSE)) {
+            log.error("User with id: {} opted out for notifications", user.getId());
+            throw new ValidationException("User opted out for notifications");
+        }
+
         Optional<City> cityOpt = cityService.findById(request.getCity().getIdCptec());
         City city = cityOpt.orElseGet(() -> fetchCity(request));
+        cityService.saveIfNotExists(city);
 
         throwIfSubscriptionExists(user, city);
 
@@ -62,9 +68,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     private City fetchCity(Subscription request) {
-        City cityFromCptec = fetchCityFromCptec(request.getCity().getName(), request.getCity().getIdCptec());
-        cityService.saveCity(cityFromCptec);
-        return cityFromCptec;
+        return fetchCityFromCptec(request.getCity().getName(), request.getCity().getIdCptec());
     }
 
     private City fetchCityFromCptec(String cityName, Long cityId) {

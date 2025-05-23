@@ -26,10 +26,5 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
     @Query("SELECT s FROM SubscriptionEntity s WHERE s.user.id = :userId AND s.city.idCptec = :cityId")
     Optional<SubscriptionEntity> findByUserIdAndCityId(@Param("userId") Long userId, @Param("cityId") Long cityId);
 
-    @Query("SELECT s FROM SubscriptionEntity s WHERE s.user.id = :userId AND s.active = true")
-    List<SubscriptionEntity> findActiveByUserId(@Param("userId") Long userId);
-
-    Optional<SubscriptionEntity> findByUserIdAndCityIdCptec(Long id, Long cityId);
-
     Optional<SubscriptionEntity> findByIdAndActiveTrue(Long id);
 }

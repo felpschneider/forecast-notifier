@@ -4,6 +4,7 @@ import com.meli.notifier.forecast.adapter.out.integration.client.CptecFeignClien
 import com.meli.notifier.forecast.application.port.in.CityService;
 import com.meli.notifier.forecast.application.port.in.CoastalCityService;
 import com.meli.notifier.forecast.domain.model.database.City;
+import feign.codec.DecodeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,18 +37,16 @@ public class CoastalCityServiceImpl implements CoastalCityService {
 
         try {
             var waveForecast = cptecClient.getWaveForecast(cityId, 0);
-            boolean isCoastal = waveForecast != null && !waveForecast.getName().equalsIgnoreCase(city.getName());
+            boolean isCoastal = waveForecast != null && waveForecast.getName().equalsIgnoreCase(city.getName());
 
             city.setIsCoastal(isCoastal);
             cityService.saveCity(city);
 
-            if (isCoastal) {
-                log.info("City {} with id: {} is coastal", waveForecast.getName(), cityId);
-            } else {
-                log.warn("City with id: {} is not coastal", cityId);
-            }
-
-            return isCoastal;
+            log.info("City {} with id: {} is coastal", waveForecast.getName(), cityId);
+            return true;
+        } catch (DecodeException e) {
+            log.info("City with id: {} is not coastal", cityId);
+            return false;
         } catch (Exception e) {
             log.error("Error determining if city is coastal: {}", e.getMessage());
             throw e;

@@ -10,14 +10,13 @@ import com.meli.notifier.forecast.domain.mapper.CityMapper;
 import com.meli.notifier.forecast.domain.mapper.ForecastMapper;
 import com.meli.notifier.forecast.domain.model.database.City;
 import com.meli.notifier.forecast.domain.model.forecast.CombinedForecastDTO;
+import com.meli.notifier.forecast.domain.model.forecast.city.CityListResponseDTO;
 import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
 import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastResponseDTO;
 import feign.FeignException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,36 +34,43 @@ public class CptecServiceImpl implements CptecService {
     private final CityService cityService;
     private final CityMapper cityMapper;
     private final ForecastMapper forecastMapper;
-    private final RedisTemplate<String, String> redisTemplate;
 
-    //    @Cacheable(value = "citiesCache", key = "#cityName")
     @Retry(name = "cptecRetry")
     @Override
     public List<City> findCities(String cityName) {
+        var cptecCities = findCitiesInCptec(cityName);
+
+        if (cptecCities == null || isEmpty(cptecCities.getCities())) {
+            log.warn("No cities found in CPTEC API for city name: {}", cityName);
+            return List.of();
+        }
+
+        return cptecCities.getCities().stream()
+                .map(cityMapper::toModel)
+                .collect(Collectors.toList());
+    }
+
+    private CityListResponseDTO findCitiesInCptec(String cityName) {
         try {
-            var citiesFromDb = cityService.findCities(cityName);
-            var cityNameFoundInList = citiesFromDb.stream().anyMatch(c -> c.getName().equalsIgnoreCase(cityName));
-
-            if (!citiesFromDb.isEmpty() && cityNameFoundInList) {
-                log.info("Cities found in database for name: {}", cityName);
-                return citiesFromDb;
-            }
-
-            var response = cptecClient.findCities(cityName);
-            if (response == null || isEmpty(response.getCities())) {
-                log.warn("No cities found in CPTEC API for city name: {}", cityName);
-                return List.of();
-            }
-
-            return response.getCities().stream()
-                    .map(cityMapper::toModel)
-                    .collect(Collectors.toList());
+            return cptecClient.findCities(cityName);
         } catch (FeignException e) {
             throw handleCptecApiError("Error searching cities", e);
         }
     }
 
-    @Cacheable(value = "weatherCache", key = "#cityId")
+    @Override
+    public List<City> findCitiesInDatabase(String cityName) {
+        log.warn("Fallback method triggered for city name: {}", cityName);
+        var cities = cityService.findByName(cityName);
+
+        if (cities.isEmpty()) {
+            log.warn("No cities found in database for city name: {}", cityName);
+            return List.of();
+        }
+
+        return cities;
+    }
+
     @Retry(name = "cptecRetry")
     @Override
     public CombinedForecastDTO getCombinedForecast(Long cityId) {
@@ -78,7 +84,6 @@ public class CptecServiceImpl implements CptecService {
         }
     }
 
-    @Cacheable(value = "weatherCache", key = "'weather:' + #cityId")
     @Override
     public ForecastResponseDTO getWeatherForecast(Long cityId) {
         try {
@@ -88,7 +93,6 @@ public class CptecServiceImpl implements CptecService {
         }
     }
 
-    @Cacheable(value = "waveForecastCache", key = "'wave:' + #cityId + ':' + #day")
     @Override
     public WaveForecastResponseDTO getWaveForecast(Long cityId, int day) {
         if (day < 0 || day > 3) {

@@ -35,7 +35,7 @@ class CityServiceImplTest {
     }
 
     @Test
-    void givenCityName_whenFindCities_thenReturnMatchingCities() {
+    void givenCityName_whenFindCities_thenReturnMatchingByName() {
         // Arrange
         String cityName = "São Paulo";
 
@@ -57,7 +57,7 @@ class CityServiceImplTest {
         when(cityMapper.toModel(entity2)).thenReturn(city2);
 
         // Act
-        List<City> result = cityService.findCities(cityName);
+        List<City> result = cityService.findByName(cityName);
 
         // Assert
         assertEquals(2, result.size());

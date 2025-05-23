@@ -74,13 +74,8 @@ public class SubscriptionController {
 
         User user = authContextService.getCurrentUser();
         try {
-            // Deactivate subscription
             subscriptionService.deactivateSubscription(subscriptionId, user);
 
-            // Remove from cache
-            redisTemplate.delete(SUBSCRIPTION_CACHE_PREFIX + subscriptionId);
-
-            schedulerService.deleteJob(subscriptionId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             throw new ValidationException("Failed to deactivate subscription: " + e.getMessage());
@@ -114,19 +109,8 @@ public class SubscriptionController {
 
         User user = authContextService.getCurrentUser();
 
-        String cacheKey = SUBSCRIPTION_CACHE_PREFIX + subscriptionId;
-        Object cachedValue = redisTemplate.opsForValue().get(cacheKey);
-        Subscription subscription = null;
-
-        if (cachedValue instanceof Subscription) {
-            subscription = (Subscription) cachedValue;
-        }
-
-        if (subscription == null) {
-            subscription = subscriptionService.findByIdAndUser(subscriptionId, user)
-                    .orElseThrow(() -> new NotFoundException(String.format("Subscription not found with ID: %s", subscriptionId)));
-            redisTemplate.opsForValue().set(cacheKey, subscription);
-        }
+        Subscription subscription = subscriptionService.findByIdAndUser(subscriptionId, user)
+                .orElseThrow(() -> new NotFoundException(String.format("Subscription not found with ID: %s", subscriptionId)));
 
         return ResponseEntity.ok(subscription);
     }

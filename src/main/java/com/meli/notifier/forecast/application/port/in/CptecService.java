@@ -11,6 +11,8 @@ public interface CptecService {
 
     List<City> findCities(String cityName);
 
+    List<City> findCitiesInDatabase(String cityName);
+
     CombinedForecastDTO getCombinedForecast(Long cityId);
 
     ForecastResponseDTO getWeatherForecast(Long cityId);
