@@ -22,7 +22,7 @@ public class CityServiceImpl implements CityService {
     private final CityMapper cityMapper;
 
     @Override
-    public List<City> findCities(String cityName) {
+    public List<City> findByName(String cityName) {
         log.info("Finding cities with name: {}", cityName);
         return cityRepository.findCityEntitiesByNameIgnoreCase(cityName)
                 .stream()
@@ -56,7 +56,8 @@ public class CityServiceImpl implements CityService {
                 .map(cityMapper::toModel);
     }
 
-    private City saveIfNotExists(City city) {
+    @Override
+    public City saveIfNotExists(City city) {
         return findById(city.getIdCptec())
                 .orElseGet(() -> {
                     log.debug("City {} not found in database, saving...", city.getName());

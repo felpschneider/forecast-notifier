@@ -66,8 +66,8 @@ public class QuartzSchedulerService {
 
             if (scheduler.checkExists(jobDetail.getKey())) {
                 scheduler.rescheduleJob(trigger.getKey(), trigger);
-                log.info("Existing job updated for subscription ID: {}",
-                        subscription.getId());
+                log.info("Existing job updated for subscription ID: {}", subscription.getId());
+                return;
             }
 
             scheduler.scheduleJob(jobDetail, trigger);
@@ -93,7 +93,7 @@ public class QuartzSchedulerService {
         return JobBuilder.newJob(NotificationJob.class)
                 .withIdentity("sub-" + subscription.getId())
                 .usingJobData(SUBSCRIPTION_ID_KEY, subscription.getId())
-                .storeDurably()
+//                .storeDurably() todo remove this line
                 .build();
     }
 

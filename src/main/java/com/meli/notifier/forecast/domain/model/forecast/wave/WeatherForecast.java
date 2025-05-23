@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.domain.model.forecast;
+package com.meli.notifier.forecast.domain.model.forecast.wave;
 
 import com.meli.notifier.forecast.domain.enums.WeatherConditionEnum;
 import lombok.AllArgsConstructor;

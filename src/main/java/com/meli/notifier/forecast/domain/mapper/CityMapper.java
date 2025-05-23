@@ -1,10 +1,10 @@
 package com.meli.notifier.forecast.domain.mapper;
 
-import com.meli.notifier.forecast.adapter.out.integration.model.city.CityResponseCptecDTO;
 import com.meli.notifier.forecast.domain.dto.request.CityRequestDTO;
 import com.meli.notifier.forecast.domain.dto.response.CityResponseDTO;
 import com.meli.notifier.forecast.domain.entity.CityEntity;
 import com.meli.notifier.forecast.domain.model.database.City;
+import com.meli.notifier.forecast.domain.model.forecast.city.CityResponseCptecDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

@@ -30,6 +30,7 @@ public class CacheConfig {
 
     private static final String WEATHER_CACHE = "weatherCache";
     private static final String CITIES_CACHE = "citiesCache";
+    private static final String SUBSCRIPTION_CACHE = "subscriptionCache";
     private static final String WAVE_FORECAST_CACHE = "waveForecastCache";
 
     @Bean
@@ -78,6 +79,7 @@ public class CacheConfig {
         cacheConfigurations.put(WEATHER_CACHE, createCacheConfiguration(getDurationUntilEndOfDay()));
         cacheConfigurations.put(CITIES_CACHE, createCacheConfiguration(getDurationUntilEndOfDay()));
         cacheConfigurations.put(WAVE_FORECAST_CACHE, createCacheConfiguration(getDurationUntilEndOfDay()));
+        cacheConfigurations.put(SUBSCRIPTION_CACHE, createCacheConfiguration(getDurationUntilEndOfDay()));
 
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(cacheConfiguration())

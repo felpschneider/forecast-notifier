@@ -1,6 +1,6 @@
 package com.meli.notifier.forecast.application.service.notification;
 
-import com.meli.notifier.forecast.application.port.in.NotificationService;
+import com.meli.notifier.forecast.application.port.in.notification.NotificationStrategy;
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SmsNotificationStrategyService implements NotificationService {
+public class SmsNotificationStrategyService implements NotificationStrategy {
 
     @Override
     public void sendNotificationToUser(NotificationPayload notification) {
@@ -40,5 +40,4 @@ public class SmsNotificationStrategyService implements NotificationService {
             throw e;
         }
     }
-
 }

@@ -1,5 +1,7 @@
 package com.meli.notifier.forecast.domain.model.forecast;
 
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastWrapper;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WeatherForecastWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

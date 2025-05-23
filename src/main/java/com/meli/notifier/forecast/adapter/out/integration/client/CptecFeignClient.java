@@ -1,9 +1,9 @@
 package com.meli.notifier.forecast.adapter.out.integration.client;
 
-import com.meli.notifier.forecast.adapter.out.integration.model.city.CityListResponseDTO;
-import com.meli.notifier.forecast.adapter.out.integration.model.wave.WaveForecastResponseDTO;
-import com.meli.notifier.forecast.adapter.out.integration.model.weather.ForecastResponseDTO;
 import com.meli.notifier.forecast.config.XmlDecoderConfig;
+import com.meli.notifier.forecast.domain.model.forecast.city.CityListResponseDTO;
+import com.meli.notifier.forecast.domain.model.forecast.wave.WaveForecastResponseDTO;
+import com.meli.notifier.forecast.domain.model.forecast.weather.ForecastResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

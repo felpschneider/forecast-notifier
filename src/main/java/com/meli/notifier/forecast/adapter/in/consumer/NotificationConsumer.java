@@ -1,13 +1,14 @@
 package com.meli.notifier.forecast.adapter.in.consumer;
 
-import com.meli.notifier.forecast.application.port.in.NotificationStrategyService;
+import com.meli.notifier.forecast.application.port.in.notification.NotificationService;
 import com.meli.notifier.forecast.config.KafkaTopicConfig;
+import com.meli.notifier.forecast.domain.exception.NotificationException;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class NotificationConsumer {
 
-    private final NotificationStrategyService notificationStrategyService;
+    private final NotificationService notificationService;
 
     @KafkaListener(
             groupId = "${spring.kafka.consumer.group-id}",
@@ -23,18 +24,18 @@ public class NotificationConsumer {
             concurrency = "6",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    @Retryable(backoff = @Backoff(delay = 2000))
-    public void processNotification(NotificationPayload payload) {
-        log.info("Processando notificação para usuário ID: {} via subscription ID: {}",
+    @RetryableTopic(backoff = @Backoff(delay = 2000))
+    public void processNotification(NotificationPayload payload) throws NotificationException {
+        var subscriptionId = payload.getSubscriptionId();
+        log.info("Processing notifications for user ID: {} and subscription ID: {}",
                 payload.getUserId(), payload.getSubscriptionId());
 
         try {
-            notificationStrategyService.sendNotification(payload);
-            log.info("Notificação processada com sucesso para usuário ID: {}", payload.getUserId());
+            notificationService.sendNotification(payload);
+            log.info("Notification processed for subscription ID: {}", subscriptionId);
         } catch (Exception e) {
-            log.error("Erro ao processar notificação para usuário ID: {}",
-                    payload.getUserId(), e);
-            throw e;
+            log.error("Error trying to process notification for subscription ID: {}", subscriptionId, e);
+            throw new NotificationException("Error trying to process notification for subscription ID: %s".formatted(subscriptionId));
         }
     }
 

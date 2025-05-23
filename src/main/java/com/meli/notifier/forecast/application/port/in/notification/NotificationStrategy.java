@@ -1,10 +1,10 @@
-package com.meli.notifier.forecast.application.port.in;
+package com.meli.notifier.forecast.application.port.in.notification;
 
 import com.meli.notifier.forecast.domain.enums.NotificationChannelsEnum;
 import com.meli.notifier.forecast.domain.model.NotificationPayload;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;
 
-public interface NotificationService {
+public interface NotificationStrategy {
     void sendNotificationToUser(NotificationPayload payload);
 
     NotificationChannelsEnum getChannel();

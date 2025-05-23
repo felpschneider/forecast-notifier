@@ -1,7 +1,7 @@
 package com.meli.notifier.forecast.application.service;
 
 import com.meli.notifier.forecast.adapter.out.persistence.repository.NotificationChannelRepository;
-import com.meli.notifier.forecast.application.port.in.NotificationChannelService;
+import com.meli.notifier.forecast.application.port.in.notification.NotificationChannelService;
 import com.meli.notifier.forecast.domain.entity.NotificationChannelEntity;
 import com.meli.notifier.forecast.domain.mapper.NotificationChannelMapper;
 import com.meli.notifier.forecast.domain.model.database.NotificationChannel;

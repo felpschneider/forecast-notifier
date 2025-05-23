@@ -1,4 +1,4 @@
-package com.meli.notifier.forecast.adapter.out.integration.model.weather;
+package com.meli.notifier.forecast.domain.model.forecast.weather;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -7,12 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ForecastDay {
+public class ForecastDay implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @JacksonXmlProperty(localName = "dia")
     private String date;
 
